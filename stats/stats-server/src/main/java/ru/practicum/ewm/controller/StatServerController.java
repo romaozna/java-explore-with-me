@@ -1,6 +1,7 @@
 package ru.practicum.ewm.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.CreatedEndpointHitDto;
 import ru.practicum.ewm.dto.EndpointHitDto;
@@ -17,6 +18,7 @@ public class StatServerController {
     private final EndpointHitService endpointHitService;
 
     @PostMapping("/hit")
+    @ResponseStatus(HttpStatus.CREATED)
     public EndpointHitDto create(@RequestBody @Valid CreatedEndpointHitDto endpointHitDto) {
         return endpointHitService.createHit(endpointHitDto);
     }
