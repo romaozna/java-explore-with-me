@@ -9,9 +9,6 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import ru.practicum.ewm.dto.CreatedEndpointHitDto;
 
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,26 +20,24 @@ public class StatClient extends BaseClient {
     public StatClient(@Value("${stat-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
                         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                         .build()
         );
     }
 
     public ResponseEntity<Object> createHit(CreatedEndpointHitDto endpointHitDto) {
-        return post("", endpointHitDto);
+        return post(API_PREFIX, endpointHitDto);
     }
 
-    public ResponseEntity<Object> getStats(@NotNull LocalDateTime start, @NotNull LocalDateTime end,
-                                           List<String> uris, boolean unique) {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("start", start);
-        parameters.put("end", end);
-        parameters.put("unique", unique);
+    public ResponseEntity<Object> getStats(String start, String end,
+                                           List<String> uris, Boolean unique) {
+        Map<String, Object> parameters = Map.of(
+                "uris", String.join(",", uris),
+                "unique", unique,
+                "start", start,
+                "end", end);
 
-        if (!uris.isEmpty()) {
-            parameters.put("uris", uris);
-        }
-        return get("/stats", parameters);
+        return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
     }
 }
