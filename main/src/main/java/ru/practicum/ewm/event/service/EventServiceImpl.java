@@ -1,10 +1,8 @@
 package ru.practicum.ewm.event.service;
 
-import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.StatClient;
@@ -195,16 +193,12 @@ public class EventServiceImpl implements EventService {
 
     private List<ViewStatDto> getEventsViewsList(List<Event> events) {
         DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        Gson gson = new Gson();
         List<String> eventUris = events.stream()
                 .map(e -> String.format("/events/%s", e.getId()))
                 .collect(Collectors.toList());
         String start = LocalDateTime.now().minusYears(2).format(customFormatter);
         String end = LocalDateTime.now().plusYears(2).format(customFormatter);
-        ResponseEntity<Object> objectResponseEntity = statClient.getStats(start, end, eventUris, false);
-        String json = gson.toJson(objectResponseEntity.getBody());
-        ViewStatDto[] viewStatDtoArray = gson.fromJson(json, ViewStatDto[].class);
-        return Arrays.asList(viewStatDtoArray);
+        return statClient.getStats(start, end, eventUris, false);
     }
 
     private void createNewHit(String ip, String url) {
