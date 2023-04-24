@@ -1,6 +1,9 @@
 package ru.practicum.ewm.event.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.event.dto.State;
@@ -14,7 +17,6 @@ import java.time.LocalDateTime;
 @Table(name = "events")
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Event {

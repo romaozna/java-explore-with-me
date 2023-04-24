@@ -1,60 +1,82 @@
 package ru.practicum.ewm.category.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.dto.CategoryDto;
-import ru.practicum.ewm.category.model.Category;
+import ru.practicum.ewm.category.dto.NewCategoryDto;
 import ru.practicum.ewm.category.mapper.CategoryMapper;
+import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.repository.CategoryRepository;
+import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.ewm.exception.OperationException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CategoryServiceImpl implements CategoryService {
+
     private final CategoryRepository categoryRepository;
 
-    @Override
-    @Transactional
-    public CategoryDto create(CategoryDto categoryDto) {
-        Category category = categoryRepository.save(CategoryMapper.toCategory(categoryDto));
-        return CategoryMapper.toCategoryDto(category);
-    }
+    private final EventRepository eventRepository;
+
+    private static final String CATEGORY_NOT_FOUND_MESSAGE = "Category with id=%s was not found";
 
     @Override
     @Transactional
-    public void delete(Long catId) {
-        categoryRepository.findById(catId).orElseThrow(() -> {
-            throw new NotFoundException("Category not found");
-        });
-        categoryRepository.deleteById(catId);
-    }
+    public CategoryDto create(NewCategoryDto newCategoryDto) {
+        Category category = CategoryMapper.toCategory(newCategoryDto);
 
-    @Override
-    @Transactional
-    public CategoryDto put(Long catId, CategoryDto categoryDto) {
-        Category category = categoryRepository.findById(catId).orElseThrow(() -> {
-            throw new NotFoundException("Category not found");
-        });
-        category.setName(categoryDto.getName());
         return CategoryMapper.toCategoryDto(categoryRepository.save(category));
     }
 
-    public List<CategoryDto> findAll(Pageable pageable) {
-        return categoryRepository.findAll(pageable).stream()
-                .map(CategoryMapper::toCategoryDto)
-                .collect(Collectors.toList());
+    @Override
+    public List<CategoryDto> getCategories(Integer from, Integer size) {
+        Pageable pageable = PageRequest.of(from, size);
+
+        return CategoryMapper.toCategoryDto(categoryRepository.findAll(pageable));
     }
 
-    public CategoryDto findById(Long catId) {
-        Category category = categoryRepository.findById(catId).orElseThrow(() -> {
-            throw new NotFoundException("Category not found");
+    @Override
+    public CategoryDto getCategoryById(Long categoryId, Integer from, Integer size) {
+        Pageable pageable = PageRequest.of(from, size);
+        List<Category> categories = categoryRepository.findCategoryById(categoryId, pageable);
+
+        if (categories.isEmpty()) {
+            throw new NotFoundException(String.format(CATEGORY_NOT_FOUND_MESSAGE, categoryId));
+        }
+
+        return CategoryMapper.toCategoryDto(categories.get(0));
+    }
+
+    @Override
+    @Transactional
+    public void deleteCategoryById(Long categoryId) {
+        if (!eventRepository.findAllByCategoryId(categoryId).isEmpty()) {
+            throw new OperationException("The category is not empty");
+        }
+
+        Integer integer = categoryRepository.deleteCategoryById(categoryId);
+
+        if (integer == 0) {
+            throw new NotFoundException(String.format(CATEGORY_NOT_FOUND_MESSAGE, categoryId));
+        }
+    }
+
+    @Override
+    @Transactional
+    public CategoryDto updateCategoryById(Long categoryId, NewCategoryDto newCategoryDto) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> {
+            throw new NotFoundException(String.format(CATEGORY_NOT_FOUND_MESSAGE, categoryId));
         });
+
+        category.setName(newCategoryDto.getName());
+
         return CategoryMapper.toCategoryDto(category);
     }
 }

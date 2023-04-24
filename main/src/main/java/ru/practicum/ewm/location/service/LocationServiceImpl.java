@@ -11,6 +11,7 @@ import ru.practicum.ewm.location.repository.LocationRepository;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LocationServiceImpl implements LocationService {
 
     private final LocationRepository locationRepository;

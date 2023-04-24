@@ -1,18 +1,18 @@
 package ru.practicum.ewm.category.service;
 
-import org.springframework.data.domain.Pageable;
 import ru.practicum.ewm.category.dto.CategoryDto;
+import ru.practicum.ewm.category.dto.NewCategoryDto;
 
 import java.util.List;
 
 public interface CategoryService {
-    CategoryDto create(CategoryDto categoryDto);
+    CategoryDto create(NewCategoryDto newCategoryDto);
 
-    void delete(Long catId);
+    List<CategoryDto> getCategories(Integer from, Integer size);
 
-    CategoryDto put(Long catId, CategoryDto categoryDto);
+    CategoryDto getCategoryById(Long categoryId, Integer from, Integer size);
 
-    List<CategoryDto> findAll(Pageable pageable);
+    void deleteCategoryById(Long categoryId);
 
-    CategoryDto findById(Long catId);
+    CategoryDto updateCategoryById(Long categoryId, NewCategoryDto newCategoryDto);
 }

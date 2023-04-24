@@ -22,16 +22,21 @@ public class RequestMapper {
     }
 
     public static List<RequestDto> toRequestDto(List<Request> requests) {
-        return requests.stream()
+        return requests
+                .stream()
                 .map(RequestMapper::toRequestDto)
                 .collect(Collectors.toList());
     }
 
-    public static Request toRequest(Long eventId, Long requesterId, State status) {
+    public static Request toRequest(Long eventId,
+                                    Long requesterId,
+                                    State status) {
         Request request = new Request();
+
         request.setRequesterId(requesterId);
         request.setEventId(eventId);
         request.setStatus(status);
+
         return request;
     }
 }

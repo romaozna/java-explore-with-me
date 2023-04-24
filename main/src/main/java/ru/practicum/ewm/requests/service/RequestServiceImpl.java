@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.event.dto.State;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
-import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.ewm.exception.OperationException;
 import ru.practicum.ewm.requests.dto.NewRequestUpdateDto;
 import ru.practicum.ewm.requests.dto.RequestDto;
 import ru.practicum.ewm.requests.dto.RequestUpdateDto;
@@ -40,9 +40,13 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     public RequestDto create(Long userId, Long eventId) {
         Event event = findEventById(eventId);
+
         validateEventForRequest(userId, event);
+
         List<Request> requests = requestRepository.findAllByEventId(eventId);
+
         checkParticipantLimit(event, requests);
+
         return saveRequest(eventId, userId, event.getRequestModeration());
     }
 
@@ -60,7 +64,9 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     public RequestDto cancelRequest(Long userId, Long requestId) {
         Request request = getRequestByRequesterIdAndId(userId, requestId);
+
         request.setStatus(State.CANCELED);
+
         return RequestMapper.toRequestDto(request);
     }
 
@@ -79,10 +85,14 @@ public class RequestServiceImpl implements RequestService {
     public RequestUpdateDto updateRequestStatus(Long userId, Long eventId,
                                                 NewRequestUpdateDto newRequestUpdateDto) {
         validateNewRequestUpdateDto(newRequestUpdateDto);
-        RequestUpdateDto requestUpdateDto = new RequestUpdateDto(new ArrayList<>(), new ArrayList<>());
+
+        RequestUpdateDto requestUpdateDto = new RequestUpdateDto(new ArrayList<>(),
+                new ArrayList<>());
         Event event = findEventById(eventId);
+
         checkEventParticipantLimit(event);
         updateRequests(newRequestUpdateDto, requestUpdateDto, event);
+
         return requestUpdateDto;
     }
 
@@ -93,55 +103,58 @@ public class RequestServiceImpl implements RequestService {
 
     private void validateEventInitiator(Long userId, Event event) {
         if (event.getInitiator().getId().equals(userId)) {
-            throw new BadRequestException(REQUEST_SAME_USER_ID_EXCEPTION_MESSAGE);
+            throw new OperationException(REQUEST_SAME_USER_ID_EXCEPTION_MESSAGE);
         }
     }
 
     private void validateEventState(Event event) {
         if (!event.getState().equals(State.PUBLISHED)) {
-            throw new BadRequestException(REQUEST_STATE_EXCEPTION_MESSAGE);
+            throw new OperationException(REQUEST_STATE_EXCEPTION_MESSAGE);
         }
     }
 
     private void checkParticipantLimit(Event event, List<Request> requests) {
         if (requests.size() >= event.getParticipantLimit()) {
-            throw new BadRequestException(REQUEST_LIMIT_EXCEPTION_MESSAGE);
+            throw new OperationException(REQUEST_LIMIT_EXCEPTION_MESSAGE);
         }
     }
 
     private RequestDto saveRequest(Long eventId, Long userId, Boolean isRequestedModeration) {
         Request request = RequestMapper.toRequest(eventId, userId,
                 isRequestedModeration ? State.PENDING : State.CONFIRMED);
+
         return RequestMapper.toRequestDto(requestRepository.save(request));
     }
 
     private void validateNewRequestUpdateDto(NewRequestUpdateDto newRequestUpdateDto) {
         if (newRequestUpdateDto == null) {
-            throw new BadRequestException(REQUEST_LIMIT_EXCEPTION_MESSAGE);
+            throw new OperationException(REQUEST_LIMIT_EXCEPTION_MESSAGE);
         }
     }
 
     private Event findEventById(Long eventId) {
         return eventRepository.findById(eventId).orElseThrow(() -> {
-            throw new BadRequestException(String.format(EVENT_NOT_FOUND_MESSAGE, eventId));
+            throw new OperationException(String.format(EVENT_NOT_FOUND_MESSAGE, eventId));
         });
     }
 
     private void checkEventParticipantLimit(Event event) {
         if (event.getConfirmedRequests() >= event.getParticipantLimit()) {
-            throw new BadRequestException(REQUEST_LIMIT_EXCEPTION_MESSAGE);
+            throw new OperationException(REQUEST_LIMIT_EXCEPTION_MESSAGE);
         }
     }
 
     private void updateRequests(NewRequestUpdateDto newRequestUpdateDto,
                                 RequestUpdateDto requestUpdateDto, Event event) {
-
         List<Long> requestIds = newRequestUpdateDto.getRequestIds();
+
         for (Long id : requestIds) {
             if (event.getParticipantLimit().equals(0) || !event.getRequestModeration()) {
                 break;
             }
+
             Request request = getRequestById(id);
+
             validateRequestStatus(newRequestUpdateDto, request);
             updateRequestStatusAndSave(newRequestUpdateDto, requestUpdateDto, event, request);
         }
@@ -156,7 +169,7 @@ public class RequestServiceImpl implements RequestService {
     private void validateRequestStatus(NewRequestUpdateDto newRequestUpdateDto, Request request) {
         if (request.getStatus().equals(State.CONFIRMED) &&
                 newRequestUpdateDto.getStatus().equals(State.REJECTED)) {
-            throw new BadRequestException(REQUEST_LIMIT_EXCEPTION_MESSAGE);
+            throw new OperationException(REQUEST_LIMIT_EXCEPTION_MESSAGE);
         }
     }
 
@@ -167,19 +180,25 @@ public class RequestServiceImpl implements RequestService {
                 || newRequestUpdateDto.getStatus().equals(State.REJECTED)) {
             setRequestStatusAndSave(requestUpdateDto.getRejectedRequests(), request, State.REJECTED);
         } else {
-            setRequestStatusAndSave(requestUpdateDto.getConfirmedRequests(), request, newRequestUpdateDto.getStatus());
+            setRequestStatusAndSave(requestUpdateDto.getConfirmedRequests(),
+                    request, newRequestUpdateDto.getStatus());
+
             incrementEventConfirmedRequests(event);
         }
     }
 
-    private void setRequestStatusAndSave(List<RequestDto> updatedRequests, Request request, State status) {
+    private void setRequestStatusAndSave(List<RequestDto> updatedRequests,
+                                         Request request, State status) {
         request.setStatus(status);
+
         requestRepository.save(request);
+
         updatedRequests.add(RequestMapper.toRequestDto(request));
     }
 
     private void incrementEventConfirmedRequests(Event event) {
         event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+
         eventRepository.save(event);
     }
 }

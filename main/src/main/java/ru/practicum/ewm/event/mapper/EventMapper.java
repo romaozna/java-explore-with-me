@@ -14,6 +14,7 @@ import ru.practicum.ewm.user.model.User;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class EventMapper {
@@ -125,7 +126,7 @@ public class EventMapper {
         }).collect(Collectors.toList());
     }
 
-    public static List<EventDto> toEventDto(List<Event> events) {
+    public static List<EventDto> toEventDto(Set<Event> events) {
         return events.stream().map(EventMapper::toEventDto).collect(Collectors.toList());
     }
 }

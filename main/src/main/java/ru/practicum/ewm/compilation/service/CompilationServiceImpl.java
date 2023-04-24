@@ -1,75 +1,85 @@
 package ru.practicum.ewm.compilation.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.compilation.dto.CompilationDto;
-import ru.practicum.ewm.compilation.dto.UpdateCompilationRequestDto;
+import ru.practicum.ewm.compilation.dto.NewCompilationDto;
 import ru.practicum.ewm.compilation.mapper.CompilationMapper;
 import ru.practicum.ewm.compilation.model.Compilation;
-import ru.practicum.ewm.compilation.repository.CompilationsRepository;
+import ru.practicum.ewm.compilation.repository.CompilationRepository;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.NotFoundException;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class CompilationServiceImpl implements CompilationService {
-    private final CompilationsRepository compilationsRepository;
-    private final EventRepository eventsRepository;
+
+    public static final String COMPILATION_NOT_FOUND_MESSAGE = "Compilation with id=%s was not found";
+    private final CompilationRepository compilationRepository;
+    private final EventRepository eventRepository;
+
 
     @Override
-    @Transactional
-    public CompilationDto create(UpdateCompilationRequestDto updateCompilationRequestDto) {
-        List<Event> events = eventsRepository.findAllById(updateCompilationRequestDto.getEvents());
-        Compilation compilation = compilationsRepository.save(CompilationMapper.toCompilation(updateCompilationRequestDto, events));
+    @Transactional(readOnly = true)
+    public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
+        Pageable pageable = PageRequest.of(from, size);
+
+        return CompilationMapper
+                .toCompilationDto(compilationRepository.getCompilations(pinned, pageable));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CompilationDto getCompilationById(Long compId) {
+        Compilation compilation = compilationRepository.findCompilationById(compId)
+                .orElseThrow(() -> new NotFoundException(String.format(COMPILATION_NOT_FOUND_MESSAGE, compId)));
+
         return CompilationMapper.toCompilationDto(compilation);
     }
 
     @Override
+    @Transactional
+    public CompilationDto create(NewCompilationDto newCompilationDto) {
+        Compilation compilation = compilationRepository
+                .save(CompilationMapper.toCompilation(newCompilationDto));
+        List<Event> events = eventRepository.findAllById(newCompilationDto.getEvents());
+
+        compilation.getEvents().addAll(events);
+
+        return CompilationMapper.toCompilationDto(compilation);
+    }
+
+    @Override
+    @Transactional
+    public CompilationDto update(Long compId, NewCompilationDto newCompilationDto) {
+        Compilation compilation = compilationRepository.findCompilationById(compId)
+                .orElseThrow(() -> new NotFoundException(String.format(COMPILATION_NOT_FOUND_MESSAGE, compId)));
+        List<Event> events = eventRepository.findAllById(newCompilationDto.getEvents());
+
+        compilation.setTitle(Objects.requireNonNullElse(newCompilationDto.getTitle(),
+                compilation.getTitle()));
+        compilation.setPinned(Objects.requireNonNullElse(newCompilationDto.getPinned(),
+                compilation.getPinned()));
+        compilation.setEvents(new HashSet<>(events));
+
+        return CompilationMapper.toCompilationDto(compilation);
+    }
+
+    @Override
+    @Transactional
     public void delete(Long compId) {
-        compilationsRepository.findById(compId).orElseThrow(() -> {
-            throw new NotFoundException("Compilation not found");
-        });
-        compilationsRepository.deleteById(compId);
-    }
+        Integer integer = compilationRepository.deleteCompilationById(compId);
 
-    @Override
-    @Transactional
-    public CompilationDto update(Long compId, UpdateCompilationRequestDto updateCompilationRequestDto) {
-        Compilation compilation = compilationsRepository.findById(compId).orElseThrow(() -> {
-            throw new NotFoundException("Compilation not found");
-        });
-        if (updateCompilationRequestDto.getEvents() != null) {
-            compilation.setEvents(eventsRepository.findAllById(updateCompilationRequestDto.getEvents()));
+        if (integer == 0) {
+            throw new NotFoundException(String.format(COMPILATION_NOT_FOUND_MESSAGE, compId));
         }
-        if (updateCompilationRequestDto.getPinned() != null) {
-            compilation.setPinned(updateCompilationRequestDto.getPinned());
-        }
-        if (updateCompilationRequestDto.getTitle() != null) {
-            compilation.setTitle(updateCompilationRequestDto.getTitle());
-        }
-        compilation = compilationsRepository.save(compilation);
-        return CompilationMapper.toCompilationDto(compilation);
-    }
-
-    @Override
-    public List<CompilationDto> findAll(Boolean pinned, Pageable pageable) {
-        return compilationsRepository.findAllByPinned(pinned, pageable).stream()
-                .map(CompilationMapper::toCompilationDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public CompilationDto findById(Long compId) {
-        Compilation compilation = compilationsRepository.findById(compId).orElseThrow(() -> {
-            throw new NotFoundException("Compilation not found");
-        });
-        return CompilationMapper.toCompilationDto(compilation);
     }
 }

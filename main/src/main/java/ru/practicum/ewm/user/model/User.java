@@ -2,20 +2,15 @@ package ru.practicum.ewm.user.model;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "users")
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "users")
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
