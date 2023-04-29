@@ -77,20 +77,20 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventDto updateByUserIdAndEventId(Long userId, Long eventId, UpdateEventUserRequest newEventDto) {
+    public EventDto updateByUserIdAndEventId(Long userId, Long eventId, NewEventDto newEventDto) {
         validateEventDate(newEventDto.getEventDate(), LocalDateTime.now().plusHours(2));
 
         Event event = getEventByInitiatorIdAndEventId(userId, eventId);
         Map<String, Long> eventViewsMap = getEventViewsMap(getEventsViewsList(List.of(event)));
 
-        updateUserEventState(event, newEventDto);
+        updateEventState(event, newEventDto);
 
         return EventMapper.toEventDto(List.of(event), eventViewsMap).get(0);
     }
 
     @Override
     @Transactional
-    public EventDto updateById(Long eventId, UpdateAdminUserRequest newEventDto) {
+    public EventDto updateById(Long eventId, NewEventDto newEventDto) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException(String.format(EVENT_NOT_FOUND_MESSAGE, eventId)));
 
@@ -99,7 +99,7 @@ public class EventServiceImpl implements EventService {
         }
 
         validateAdminEventDate(newEventDto.getEventDate(), event);
-        updateAdminEventState(event, newEventDto);
+        updateEventState(event, newEventDto);
         updateEventDetails(event, newEventDto);
 
         Map<String, Long> eventViewsMap = getEventViewsMap(getEventsViewsList(List.of(event)));
@@ -164,8 +164,8 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private void updateAdminEventState(Event event, UpdateAdminUserRequest newEventDto) {
-        EventAdminAction stateAction = newEventDto.getStateAction();
+    private void updateEventState(Event event, NewEventDto newEventDto) {
+        StateAction stateAction = newEventDto.getStateAction();
 
         if (stateAction == null && event.getState().equals(EventState.PUBLISHED)) {
             throw new OperationException(String.format(EVENT_UPDATE_PUBLISHED_MESSAGE,
@@ -177,6 +177,12 @@ public class EventServiceImpl implements EventService {
         }
 
         switch (stateAction) {
+            case CANCEL_REVIEW:
+                event.setState(EventState.CANCELED);
+                break;
+            case SEND_TO_REVIEW:
+                event.setState(EventState.PENDING);
+                break;
             case REJECT_EVENT:
                 if (event.getState().equals(EventState.PUBLISHED)) {
                     throw new OperationException(String.format(EVENT_CANCEL_EXCEPTION_MESSAGE,
@@ -194,28 +200,6 @@ public class EventServiceImpl implements EventService {
                     event.setPublishedOn(LocalDateTime.now());
                     event.setRequestModeration(true);
                 }
-                break;
-        }
-    }
-
-    private void updateUserEventState(Event event, UpdateEventUserRequest newEventDto) {
-        EventUserAction stateAction = newEventDto.getStateAction();
-
-        if (stateAction == null && event.getState().equals(EventState.PUBLISHED)) {
-            throw new OperationException(String.format(EVENT_UPDATE_PUBLISHED_MESSAGE,
-                    event.getState()));
-        }
-
-        if (stateAction == null) {
-            return;
-        }
-
-        switch (stateAction) {
-            case CANCEL_REVIEW:
-                event.setState(EventState.CANCELED);
-                break;
-            case SEND_TO_REVIEW:
-                event.setState(EventState.PENDING);
                 break;
         }
     }
@@ -290,7 +274,7 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
-    private void updateEventDetails(Event event, UpdateAdminUserRequest newEventDto) {
+    private void updateEventDetails(Event event, NewEventDto newEventDto) {
         event.setParticipantLimit(Objects.requireNonNullElse(newEventDto.getParticipantLimit(), event.getParticipantLimit()));
         event.setTitle(Objects.requireNonNullElse(newEventDto.getTitle(), event.getTitle()));
         event.setPaid(Objects.requireNonNullElse(newEventDto.getPaid(), event.getPaid()));

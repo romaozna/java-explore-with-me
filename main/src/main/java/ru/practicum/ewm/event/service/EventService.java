@@ -20,9 +20,9 @@ public interface EventService {
 
     EventDto getByUserIdAndEventId(Long userId, Long eventId);
 
-    EventDto updateByUserIdAndEventId(Long userId, Long eventId, UpdateEventUserRequest newEventDto);
+    EventDto updateByUserIdAndEventId(Long userId, Long eventId, NewEventDto newEventDto);
 
-    EventDto updateById(Long eventId, UpdateAdminUserRequest newEventDto);
+    EventDto updateById(Long eventId, NewEventDto newEventDto);
 
     List<EventDto> getAll(LocalDateTime rangeStart, LocalDateTime rangeEnd, List<Long> users,
                              List<EventState> states, List<Long> categories, Integer from, Integer size);

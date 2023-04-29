@@ -7,7 +7,6 @@ import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.service.CategoryService;
 import ru.practicum.ewm.event.dto.EventDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
-import ru.practicum.ewm.event.dto.UpdateEventUserRequest;
 import ru.practicum.ewm.event.service.EventService;
 import ru.practicum.ewm.location.dto.LocationDto;
 import ru.practicum.ewm.location.dto.NewLocationDto;
@@ -60,7 +59,7 @@ public class EventPrivateController {
     @PatchMapping("/users/{userId}/events/{eventId}")
     public EventDto updateEventByUserIdAndEventId(@PathVariable("userId") Long userId,
                                                   @PathVariable("eventId") Long eventId,
-                                                  @RequestBody UpdateEventUserRequest newEventDto) {
+                                                  @RequestBody NewEventDto newEventDto) {
         return eventService.updateByUserIdAndEventId(userId, eventId, newEventDto);
     }
 }

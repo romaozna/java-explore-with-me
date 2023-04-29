@@ -5,7 +5,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.event.dto.EventDto;
 import ru.practicum.ewm.event.dto.EventState;
-import ru.practicum.ewm.event.dto.UpdateAdminUserRequest;
+import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.service.EventService;
 
 import javax.validation.Valid;
@@ -21,7 +21,7 @@ public class EventAdminController {
 
     @PatchMapping("/admin/events/{eventId}")
     public EventDto updateEventByUserIdAndEventId(@PathVariable("eventId") Long eventId,
-                                                  @Valid @RequestBody UpdateAdminUserRequest newEventDto) {
+                                                  @Valid @RequestBody NewEventDto newEventDto) {
         return eventService.updateById(eventId, newEventDto);
     }
 
