@@ -24,13 +24,13 @@ public class RequestPrivateController {
 
     @GetMapping("/users/{userId}/requests")
     public List<RequestDto> getRequestsById(@PathVariable("userId") Long userId) {
-        return requestService.getById(userId);
+        return requestService.getRequestsById(userId);
     }
 
     @GetMapping("/users/{userId}/events/{eventId}/requests")
     public List<RequestDto> getRequestsByUserIdAndEventId(@PathVariable("userId") Long userId,
                                                           @PathVariable("eventId") Long eventId) {
-        return requestService.getByUserIdAndEventId(userId, eventId);
+        return requestService.getRequestsByUserIdAndEventId(userId, eventId);
     }
 
     @PatchMapping("/users/{userId}/requests/{requestId}/cancel")
@@ -43,6 +43,6 @@ public class RequestPrivateController {
     public RequestUpdateDto updateRequestStatus(@PathVariable("userId") Long userId,
                                                 @PathVariable("eventId") Long eventId,
                                                 @RequestBody(required = false) NewRequestUpdateDto newRequestUpdateDto) {
-        return requestService.updateStatus(userId, eventId, newRequestUpdateDto);
+        return requestService.updateRequestStatus(userId, eventId, newRequestUpdateDto);
     }
 }

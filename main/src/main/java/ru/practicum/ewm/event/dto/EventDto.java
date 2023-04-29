@@ -26,7 +26,7 @@ public class EventDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime publishedOn;
     Boolean requestModeration;
-    EventState state;
+    State state;
     String title;
     Long views;
 }

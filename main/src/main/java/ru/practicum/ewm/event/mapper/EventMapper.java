@@ -3,7 +3,6 @@ package ru.practicum.ewm.event.mapper;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.event.dto.EventDto;
-import ru.practicum.ewm.event.dto.EventState;
 import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.location.dto.LocationDto;
@@ -50,7 +49,7 @@ public class EventMapper {
         event.setParticipantLimit(newEventDto.getParticipantLimit());
         event.setRequestModeration(newEventDto.getRequestModeration());
         event.setTitle(newEventDto.getTitle());
-        event.setState(EventState.PENDING);
+        event.setState(newEventDto.getStateAction());
 
         event.setLocation(location);
         event.setCategory(category);

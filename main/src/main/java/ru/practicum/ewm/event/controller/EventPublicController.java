@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.event.dto.EventDto;
-import ru.practicum.ewm.event.dto.EventState;
 import ru.practicum.ewm.event.dto.SortVariant;
+import ru.practicum.ewm.event.dto.State;
 import ru.practicum.ewm.event.service.EventService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +42,7 @@ public class EventPublicController {
 
         return eventService.getPublicEvents(from,
                 size,
-                EventState.PUBLISHED,
+                State.PUBLISHED,
                 text,
                 categories,
                 paid,

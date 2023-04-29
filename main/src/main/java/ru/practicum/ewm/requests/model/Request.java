@@ -2,6 +2,7 @@ package ru.practicum.ewm.requests.model;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import ru.practicum.ewm.event.dto.State;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ public class Request {
     @Column(name = "requester_id", nullable = false)
     private Long requesterId;
     @Column(nullable = false)
-    private RequestStatus status;
+    private State status;
     @Column(nullable = false)
     @CreationTimestamp
     private LocalDateTime created;

@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface CompilationService {
 
-    List<CompilationDto> get(Boolean pinned, Integer from, Integer size);
+    List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size);
 
-    CompilationDto getById(Long compId);
+    CompilationDto getCompilationById(Long compId);
 
     CompilationDto create(NewCompilationDto newCompilationDto);
 

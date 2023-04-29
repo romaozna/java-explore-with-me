@@ -20,7 +20,7 @@ public class CategoryPublicController {
     public List<CategoryDto> getCategories(
             @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
             @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
-        return categoryService.get(from, size);
+        return categoryService.getCategories(from, size);
     }
 
     @GetMapping("/categories/{categoryId}")
@@ -28,6 +28,6 @@ public class CategoryPublicController {
             @PathVariable("categoryId") Long categoryId,
             @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
             @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
-        return categoryService.getById(categoryId, from, size);
+        return categoryService.getCategoryById(categoryId, from, size);
     }
 }

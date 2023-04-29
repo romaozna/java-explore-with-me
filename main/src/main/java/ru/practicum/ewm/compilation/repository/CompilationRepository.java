@@ -15,10 +15,10 @@ public interface CompilationRepository extends JpaRepository<Compilation, Long> 
     @EntityGraph(value = "compilation-with-events", type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT c FROM Compilation AS c " +
             "WHERE (:pinned IS NULL OR c.pinned = :pinned)")
-    List<Compilation> get(@Param("pinned") Boolean pinned, Pageable pageable);
+    List<Compilation> getCompilations(@Param("pinned") Boolean pinned, Pageable pageable);
 
     @EntityGraph(value = "compilation-with-events", type = EntityGraph.EntityGraphType.LOAD)
-    Optional<Compilation> findById(Long id);
+    Optional<Compilation> findCompilationById(Long id);
 
     Integer deleteCompilationById(Long compilationId);
 }
