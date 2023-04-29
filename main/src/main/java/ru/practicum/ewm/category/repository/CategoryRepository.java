@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    List<Category> findCategoryById(Long id, Pageable pageable);
+    List<Category> findById(Long id, Pageable pageable);
 
     Integer deleteCategoryById(Long id);
 }

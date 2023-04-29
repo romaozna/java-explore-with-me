@@ -4,7 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.practicum.ewm.event.dto.State;
+import ru.practicum.ewm.event.dto.EventState;
 import ru.practicum.ewm.event.model.Event;
 
 import java.time.LocalDateTime;
@@ -23,10 +23,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND (:categories IS NULL OR e.category.id IN :categories) " +
             "AND (coalesce(:rangeStart, :rangeEnd) IS NULL " +
             "OR e.eventDate BETWEEN coalesce(:rangeStart, e.eventDate) AND coalesce(:rangeEnd, e.eventDate))")
-    List<Event> getEvents(@Param("rangeStart") LocalDateTime rangeStart,
+    List<Event> getAll(@Param("rangeStart") LocalDateTime rangeStart,
                           @Param("rangeEnd") LocalDateTime rangeEnd,
                           @Param("users") List<Long> users,
-                          @Param("states") List<State> states,
+                          @Param("states") List<EventState> states,
                           @Param("categories") List<Long> categories,
                           Pageable pageable);
 
@@ -40,12 +40,12 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND ((coalesce(:rangeStart, :rangeEnd) IS NULL AND e.eventDate > now()) " +
             "OR e.eventDate BETWEEN coalesce(:rangeStart, e.eventDate) AND coalesce(:rangeEnd, e.eventDate))")
     List<Event> getPublicEvents(Pageable pageable,
-                                @Param("state") State state,
+                                @Param("state") EventState state,
                                 @Param("text") String text,
                                 @Param("categories") List<Long> categories,
                                 @Param("paid") Boolean paid,
                                 @Param("rangeStart") LocalDateTime rangeStart,
                                 @Param("rangeEnd") LocalDateTime rangeEnd);
 
-    Event findEventByIdAndState(Long id, State state);
+    Event findEventByIdAndState(Long id, EventState state);
 }

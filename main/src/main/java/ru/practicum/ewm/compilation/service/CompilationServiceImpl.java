@@ -20,6 +20,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CompilationServiceImpl implements CompilationService {
 
     public static final String COMPILATION_NOT_FOUND_MESSAGE = "Compilation with id=%s was not found";
@@ -28,18 +29,16 @@ public class CompilationServiceImpl implements CompilationService {
 
 
     @Override
-    @Transactional(readOnly = true)
-    public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
+    public List<CompilationDto> get(Boolean pinned, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from, size);
 
         return CompilationMapper
-                .toCompilationDto(compilationRepository.getCompilations(pinned, pageable));
+                .toCompilationDto(compilationRepository.get(pinned, pageable));
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public CompilationDto getCompilationById(Long compId) {
-        Compilation compilation = compilationRepository.findCompilationById(compId)
+    public CompilationDto getById(Long compId) {
+        Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException(String.format(COMPILATION_NOT_FOUND_MESSAGE, compId)));
 
         return CompilationMapper.toCompilationDto(compilation);
@@ -60,7 +59,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public CompilationDto update(Long compId, NewCompilationDto newCompilationDto) {
-        Compilation compilation = compilationRepository.findCompilationById(compId)
+        Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException(String.format(COMPILATION_NOT_FOUND_MESSAGE, compId)));
         List<Event> events = eventRepository.findAllById(newCompilationDto.getEvents());
 
@@ -76,9 +75,9 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public void delete(Long compId) {
-        Integer integer = compilationRepository.deleteCompilationById(compId);
+        Integer count = compilationRepository.deleteCompilationById(compId);
 
-        if (integer == 0) {
+        if (count == 0) {
             throw new NotFoundException(String.format(COMPILATION_NOT_FOUND_MESSAGE, compId));
         }
     }

@@ -27,12 +27,12 @@ public class UserAdminController {
             @RequestParam(value = "ids", required = false) List<Long> ids,
             @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
             @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
-        return userService.getUsers(ids, from, size);
+        return userService.getAll(ids, from, size);
     }
 
     @DeleteMapping("/admin/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategoryById(@PathVariable("userId") Long userId) {
-        userService.deleteUserById(userId);
+        userService.deleteById(userId);
     }
 }

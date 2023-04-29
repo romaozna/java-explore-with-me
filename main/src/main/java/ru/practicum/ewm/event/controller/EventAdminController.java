@@ -1,15 +1,18 @@
 package ru.practicum.ewm.event.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.event.dto.EventDto;
-import ru.practicum.ewm.event.dto.NewEventDto;
-import ru.practicum.ewm.event.dto.State;
+import ru.practicum.ewm.event.dto.EventState;
+import ru.practicum.ewm.event.dto.UpdateAdminUserRequest;
 import ru.practicum.ewm.event.service.EventService;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 public class EventAdminController {
@@ -18,8 +21,8 @@ public class EventAdminController {
 
     @PatchMapping("/admin/events/{eventId}")
     public EventDto updateEventByUserIdAndEventId(@PathVariable("eventId") Long eventId,
-                                                  @RequestBody(required = false) NewEventDto newEventDto) {
-        return eventService.updateEventByEventId(eventId, newEventDto);
+                                                  @Valid @RequestBody UpdateAdminUserRequest newEventDto) {
+        return eventService.updateById(eventId, newEventDto);
     }
 
     @GetMapping("/admin/events")
@@ -30,13 +33,13 @@ public class EventAdminController {
                                     @RequestParam(value = "users", required = false)
                                     List<Long> users,
                                     @RequestParam(value = "states", required = false)
-                                    List<State> states,
+                                    List<EventState> states,
                                     @RequestParam(value = "categories", required = false)
                                     List<Long> categories,
                                     @RequestParam(value = "from", required = false, defaultValue = "0")
                                     Integer from,
                                     @RequestParam(value = "size", required = false, defaultValue = "10")
                                     Integer size) {
-        return eventService.getEvents(rangeStart, rangeEnd, users, states, categories, from, size);
+        return eventService.getAll(rangeStart, rangeEnd, users, states, categories, from, size);
     }
 }

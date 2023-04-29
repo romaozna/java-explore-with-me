@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @Jacksonized
-public class NewEventDto {
+public class UpdateEventUserRequest {
     @NotBlank
     @Size(min = 20, max = 2000)
     String annotation;
@@ -37,4 +37,5 @@ public class NewEventDto {
     @NotBlank
     @Size(min = 3, max = 120)
     String title;
+    EventUserAction stateAction;
 }
