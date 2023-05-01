@@ -1,10 +1,7 @@
 package ru.practicum.ewm.event.service;
 
 import ru.practicum.ewm.category.dto.CategoryDto;
-import ru.practicum.ewm.event.dto.EventDto;
-import ru.practicum.ewm.event.dto.NewEventDto;
-import ru.practicum.ewm.event.dto.SortVariant;
-import ru.practicum.ewm.event.dto.State;
+import ru.practicum.ewm.event.dto.*;
 import ru.practicum.ewm.location.dto.LocationDto;
 import ru.practicum.ewm.user.dto.UserDto;
 
@@ -14,7 +11,7 @@ import java.util.List;
 public interface EventService {
 
     EventDto create(
-            NewEventDto newEventDto,
+            NewEventDto updateEventDto,
             LocationDto locationDto,
             UserDto userDto,
             CategoryDto categoryDto);
@@ -23,9 +20,9 @@ public interface EventService {
 
     EventDto getEventByUserIdAndEventId(Long userId, Long eventId);
 
-    EventDto updateEventByUserIdAndEventId(Long userId, Long eventId, NewEventDto newEventDto);
+    EventDto updateEventByUserIdAndEventId(Long userId, Long eventId, UpdateEventDto updateEventDto);
 
-    EventDto updateEventByEventId(Long eventId, NewEventDto newEventDto);
+    EventDto updateEventByEventId(Long eventId, UpdateEventDto updateEventDto);
 
     List<EventDto> getEvents(LocalDateTime rangeStart, LocalDateTime rangeEnd, List<Long> users,
                              List<State> states, List<Long> categories, Integer from, Integer size);

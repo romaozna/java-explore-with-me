@@ -9,10 +9,7 @@ import ru.practicum.ewm.StatClient;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.dto.CreatedEndpointHitDto;
 import ru.practicum.ewm.dto.ViewStatDto;
-import ru.practicum.ewm.event.dto.EventDto;
-import ru.practicum.ewm.event.dto.NewEventDto;
-import ru.practicum.ewm.event.dto.SortVariant;
-import ru.practicum.ewm.event.dto.State;
+import ru.practicum.ewm.event.dto.*;
 import ru.practicum.ewm.event.mapper.EventMapper;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
@@ -80,30 +77,30 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventDto updateEventByUserIdAndEventId(Long userId, Long eventId, NewEventDto newEventDto) {
-        validateEventDate(newEventDto.getEventDate(), LocalDateTime.now().plusHours(2));
+    public EventDto updateEventByUserIdAndEventId(Long userId, Long eventId, UpdateEventDto updateEventDto) {
+        validateEventDate(updateEventDto.getEventDate(), LocalDateTime.now().plusHours(2));
 
         Event event = getEventByInitiatorIdAndEventId(userId, eventId);
         Map<String, Long> eventViewsMap = getEventViewsMap(getEventsViewsList(List.of(event)));
 
-        updateEventState(event, newEventDto);
+        updateEventState(event, updateEventDto);
 
         return EventMapper.toEventDto(List.of(event), eventViewsMap).get(0);
     }
 
     @Override
     @Transactional
-    public EventDto updateEventByEventId(Long eventId, NewEventDto newEventDto) {
+    public EventDto updateEventByEventId(Long eventId, UpdateEventDto updateEventDto) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException(String.format(EVENT_NOT_FOUND_MESSAGE, eventId)));
 
-        if (newEventDto == null) {
+        if (updateEventDto == null) {
             return EventMapper.toEventDto(event);
         }
 
-        validateAdminEventDate(newEventDto.getEventDate(), event);
-        updateEventState(event, newEventDto);
-        updateEventDetails(event, newEventDto);
+        validateAdminEventDate(updateEventDto.getEventDate(), event);
+        updateEventState(event, updateEventDto);
+        updateEventDetails(event, updateEventDto);
 
         Map<String, Long> eventViewsMap = getEventViewsMap(getEventsViewsList(List.of(event)));
 
@@ -167,8 +164,8 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private void updateEventState(Event event, NewEventDto newEventDto) {
-        State stateAction = newEventDto.getStateAction();
+    private void updateEventState(Event event, UpdateEventDto updateEventDto) {
+        State stateAction = updateEventDto.getStateAction();
 
         if (stateAction == null && event.getState().equals(State.PUBLISHED)) {
             throw new OperationException(String.format(EVENT_UPDATE_PUBLISHED_MESSAGE,
@@ -279,13 +276,13 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
-    private void updateEventDetails(Event event, NewEventDto newEventDto) {
-        event.setParticipantLimit(Objects.requireNonNullElse(newEventDto.getParticipantLimit(), event.getParticipantLimit()));
-        event.setTitle(Objects.requireNonNullElse(newEventDto.getTitle(), event.getTitle()));
-        event.setPaid(Objects.requireNonNullElse(newEventDto.getPaid(), event.getPaid()));
-        event.setDescription(Objects.requireNonNullElse(newEventDto.getDescription(), event.getDescription()));
-        event.setEventDate(Objects.requireNonNullElse(newEventDto.getEventDate(), event.getEventDate()));
-        event.setAnnotation(Objects.requireNonNullElse(newEventDto.getAnnotation(), event.getAnnotation()));
+    private void updateEventDetails(Event event, UpdateEventDto updateEventDto) {
+        event.setParticipantLimit(Objects.requireNonNullElse(updateEventDto.getParticipantLimit(), event.getParticipantLimit()));
+        event.setTitle(Objects.requireNonNullElse(updateEventDto.getTitle(), event.getTitle()));
+        event.setPaid(Objects.requireNonNullElse(updateEventDto.getPaid(), event.getPaid()));
+        event.setDescription(Objects.requireNonNullElse(updateEventDto.getDescription(), event.getDescription()));
+        event.setEventDate(Objects.requireNonNullElse(updateEventDto.getEventDate(), event.getEventDate()));
+        event.setAnnotation(Objects.requireNonNullElse(updateEventDto.getAnnotation(), event.getAnnotation()));
     }
 
     private Event getEventByInitiatorIdAndEventId(Long userId, Long eventId) {

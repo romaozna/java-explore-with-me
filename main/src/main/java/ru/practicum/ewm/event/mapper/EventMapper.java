@@ -4,6 +4,7 @@ import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.event.dto.EventDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
+import ru.practicum.ewm.event.dto.UpdateEventDto;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.location.dto.LocationDto;
 import ru.practicum.ewm.location.dto.NewLocationDto;
@@ -22,7 +23,7 @@ public class EventMapper {
     private EventMapper() {
     }
 
-    public static Event toEvent(NewEventDto newEventDto,
+    public static Event toEvent(UpdateEventDto updateEventDto,
                                 LocationDto locationDto,
                                 UserDto userDto,
                                 CategoryDto categoryDto) {
@@ -42,14 +43,50 @@ public class EventMapper {
         category.setId(categoryDto.getId());
         category.setName(categoryDto.getName());
 
-        event.setAnnotation(newEventDto.getAnnotation());
-        event.setDescription(newEventDto.getDescription());
-        event.setEventDate(newEventDto.getEventDate());
-        event.setPaid(newEventDto.getPaid());
-        event.setParticipantLimit(newEventDto.getParticipantLimit());
-        event.setRequestModeration(newEventDto.getRequestModeration());
-        event.setTitle(newEventDto.getTitle());
-        event.setState(newEventDto.getStateAction());
+        event.setAnnotation(updateEventDto.getAnnotation());
+        event.setDescription(updateEventDto.getDescription());
+        event.setEventDate(updateEventDto.getEventDate());
+        event.setPaid(updateEventDto.getPaid());
+        event.setParticipantLimit(updateEventDto.getParticipantLimit());
+        event.setRequestModeration(updateEventDto.getRequestModeration());
+        event.setTitle(updateEventDto.getTitle());
+        event.setState(updateEventDto.getStateAction());
+
+        event.setLocation(location);
+        event.setCategory(category);
+        event.setInitiator(user);
+
+        return event;
+    }
+
+    public static Event toEvent(NewEventDto updateEventDto,
+                                LocationDto locationDto,
+                                UserDto userDto,
+                                CategoryDto categoryDto) {
+        Event event = new Event();
+        Category category = new Category();
+        Location location = new Location();
+        User user = new User();
+
+        user.setId(userDto.getId());
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+
+        location.setId(locationDto.getId());
+        location.setLat(locationDto.getLat());
+        location.setLon(locationDto.getLon());
+
+        category.setId(categoryDto.getId());
+        category.setName(categoryDto.getName());
+
+        event.setAnnotation(updateEventDto.getAnnotation());
+        event.setDescription(updateEventDto.getDescription());
+        event.setEventDate(updateEventDto.getEventDate());
+        event.setPaid(updateEventDto.getPaid());
+        event.setParticipantLimit(updateEventDto.getParticipantLimit());
+        event.setRequestModeration(updateEventDto.getRequestModeration());
+        event.setTitle(updateEventDto.getTitle());
+        event.setState(updateEventDto.getStateAction());
 
         event.setLocation(location);
         event.setCategory(category);

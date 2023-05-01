@@ -1,25 +1,28 @@
 package ru.practicum.ewm.event.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.event.dto.EventDto;
-import ru.practicum.ewm.event.dto.NewEventDto;
+import ru.practicum.ewm.event.dto.UpdateEventDto;
 import ru.practicum.ewm.event.dto.State;
 import ru.practicum.ewm.event.service.EventService;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 public class EventAdminController {
 
     private final EventService eventService;
 
     @PatchMapping("/admin/events/{eventId}")
     public EventDto updateEventByUserIdAndEventId(@PathVariable("eventId") Long eventId,
-                                                  @RequestBody(required = false) NewEventDto newEventDto) {
-        return eventService.updateEventByEventId(eventId, newEventDto);
+                                                  @Valid @RequestBody UpdateEventDto updateEventDto) {
+        return eventService.updateEventByEventId(eventId, updateEventDto);
     }
 
     @GetMapping("/admin/events")
