@@ -1,7 +1,7 @@
 package ru.practicum.ewm.requests.mapper;
 
-import ru.practicum.ewm.event.dto.State;
 import ru.practicum.ewm.requests.dto.RequestDto;
+import ru.practicum.ewm.requests.dto.RequestStatus;
 import ru.practicum.ewm.requests.model.Request;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public class RequestMapper {
 
     public static Request toRequest(Long eventId,
                                     Long requesterId,
-                                    State status) {
+                                    RequestStatus status) {
         Request request = new Request();
 
         request.setRequesterId(requesterId);

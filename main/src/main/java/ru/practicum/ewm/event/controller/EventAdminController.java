@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.event.dto.EventDto;
+import ru.practicum.ewm.event.dto.EventState;
 import ru.practicum.ewm.event.dto.UpdateEventDto;
-import ru.practicum.ewm.event.dto.State;
 import ru.practicum.ewm.event.service.EventService;
 
 import javax.validation.Valid;
@@ -33,7 +33,7 @@ public class EventAdminController {
                                     @RequestParam(value = "users", required = false)
                                     List<Long> users,
                                     @RequestParam(value = "states", required = false)
-                                    List<State> states,
+                                    List<EventState> states,
                                     @RequestParam(value = "categories", required = false)
                                     List<Long> categories,
                                     @RequestParam(value = "from", required = false, defaultValue = "0")

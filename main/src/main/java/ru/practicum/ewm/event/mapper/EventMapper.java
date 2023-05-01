@@ -50,7 +50,7 @@ public class EventMapper {
         event.setParticipantLimit(updateEventDto.getParticipantLimit());
         event.setRequestModeration(updateEventDto.getRequestModeration());
         event.setTitle(updateEventDto.getTitle());
-        event.setState(updateEventDto.getStateAction());
+        //event.setState(updateEventDto.getStateAction());
 
         event.setLocation(location);
         event.setCategory(category);
@@ -59,7 +59,7 @@ public class EventMapper {
         return event;
     }
 
-    public static Event toEvent(NewEventDto updateEventDto,
+    public static Event toEvent(NewEventDto newEventDto,
                                 LocationDto locationDto,
                                 UserDto userDto,
                                 CategoryDto categoryDto) {
@@ -79,14 +79,13 @@ public class EventMapper {
         category.setId(categoryDto.getId());
         category.setName(categoryDto.getName());
 
-        event.setAnnotation(updateEventDto.getAnnotation());
-        event.setDescription(updateEventDto.getDescription());
-        event.setEventDate(updateEventDto.getEventDate());
-        event.setPaid(updateEventDto.getPaid());
-        event.setParticipantLimit(updateEventDto.getParticipantLimit());
-        event.setRequestModeration(updateEventDto.getRequestModeration());
-        event.setTitle(updateEventDto.getTitle());
-        event.setState(updateEventDto.getStateAction());
+        event.setAnnotation(newEventDto.getAnnotation());
+        event.setDescription(newEventDto.getDescription());
+        event.setEventDate(newEventDto.getEventDate());
+        event.setPaid(newEventDto.getPaid());
+        event.setParticipantLimit(newEventDto.getParticipantLimit());
+        event.setRequestModeration(newEventDto.getRequestModeration());
+        event.setTitle(newEventDto.getTitle());
 
         event.setLocation(location);
         event.setCategory(category);

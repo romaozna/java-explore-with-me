@@ -11,7 +11,7 @@ import java.util.List;
 public interface EventService {
 
     EventDto create(
-            NewEventDto updateEventDto,
+            NewEventDto newEventDto,
             LocationDto locationDto,
             UserDto userDto,
             CategoryDto categoryDto);
@@ -25,9 +25,9 @@ public interface EventService {
     EventDto updateEventByEventId(Long eventId, UpdateEventDto updateEventDto);
 
     List<EventDto> getEvents(LocalDateTime rangeStart, LocalDateTime rangeEnd, List<Long> users,
-                             List<State> states, List<Long> categories, Integer from, Integer size);
+                             List<EventState> states, List<Long> categories, Integer from, Integer size);
 
-    List<EventDto> getPublicEvents(Integer from, Integer size, State state,
+    List<EventDto> getPublicEvents(Integer from, Integer size, EventState state,
                                    String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
                                    LocalDateTime rangeEnd, SortVariant sort, Boolean onlyAvailable, String ip, String uri);
 

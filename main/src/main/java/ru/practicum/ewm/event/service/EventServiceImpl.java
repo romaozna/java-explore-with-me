@@ -53,7 +53,7 @@ public class EventServiceImpl implements EventService {
 
         Event event = EventMapper.toEvent(newEventDto, locationDto, userDto, categoryDto);
 
-        event.setState(State.PENDING);
+        event.setState(EventState.PENDING);
 
         return EventMapper.toEventDto(eventRepository.save(event));
     }
@@ -109,7 +109,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventDto> getEvents(LocalDateTime rangeStart, LocalDateTime rangeEnd, List<Long> users,
-                                    List<State> states, List<Long> categories, Integer from, Integer size) {
+                                    List<EventState> states, List<Long> categories, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from, size);
         List<Event> events = eventRepository.getEvents(rangeStart, rangeEnd,
                 users, states, categories, pageable);
@@ -119,7 +119,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDto> getPublicEvents(Integer from, Integer size, State state,
+    public List<EventDto> getPublicEvents(Integer from, Integer size, EventState state,
                                           String text, List<Long> categories, Boolean paid,
                                           LocalDateTime rangeStart, LocalDateTime rangeEnd, SortVariant sortVariant,
                                           Boolean onlyAvailable, String ip, String url) {
@@ -142,7 +142,7 @@ public class EventServiceImpl implements EventService {
     public EventDto getPublicEventById(Long eventId, String ip, String url) {
         createNewHit(ip, url);
 
-        Event event = getEventByEventIdAndState(eventId, State.PUBLISHED);
+        Event event = getEventByEventIdAndState(eventId, EventState.PUBLISHED);
         Map<String, Long> eventViewsMap = getEventViewsMap(getEventsViewsList(List.of(event)));
 
         return EventMapper.toEventDto(List.of(event), eventViewsMap).get(0);
@@ -165,9 +165,9 @@ public class EventServiceImpl implements EventService {
     }
 
     private void updateEventState(Event event, UpdateEventDto updateEventDto) {
-        State stateAction = updateEventDto.getStateAction();
+        StateAction stateAction = updateEventDto.getStateAction();
 
-        if (stateAction == null && event.getState().equals(State.PUBLISHED)) {
+        if (stateAction == null && event.getState().equals(EventState.PUBLISHED)) {
             throw new OperationException(String.format(EVENT_UPDATE_PUBLISHED_MESSAGE,
                     event.getState()));
         }
@@ -178,25 +178,25 @@ public class EventServiceImpl implements EventService {
 
         switch (stateAction) {
             case CANCEL_REVIEW:
-                event.setState(State.CANCELED);
+                event.setState(EventState.CANCELED);
                 break;
             case SEND_TO_REVIEW:
-                event.setState(State.PENDING);
+                event.setState(EventState.PENDING);
                 break;
             case REJECT_EVENT:
-                if (event.getState().equals(State.PUBLISHED)) {
+                if (event.getState().equals(EventState.PUBLISHED)) {
                     throw new OperationException(String.format(EVENT_CANCEL_EXCEPTION_MESSAGE,
                             event.getState()));
                 }
-                event.setState(State.CANCELED);
+                event.setState(EventState.CANCELED);
                 break;
             case PUBLISH_EVENT:
-                if (event.getState().equals(State.PUBLISHED) || event.getState().equals(State.CANCELED)) {
+                if (event.getState().equals(EventState.PUBLISHED) || event.getState().equals(EventState.CANCELED)) {
                     throw new OperationException(String.format(EVENT_STATE_EXCEPTION_MESSAGE,
                             event.getState()));
                 }
-                if (event.getState().equals(State.PENDING)) {
-                    event.setState(State.PUBLISHED);
+                if (event.getState().equals(EventState.PENDING)) {
+                    event.setState(EventState.PUBLISHED);
                     event.setPublishedOn(LocalDateTime.now());
                     event.setRequestModeration(true);
                 }
@@ -293,7 +293,7 @@ public class EventServiceImpl implements EventService {
         return event;
     }
 
-    private Event getEventByEventIdAndState(Long eventId, State state) {
+    private Event getEventByEventIdAndState(Long eventId, EventState state) {
         Event event = eventRepository.findEventByIdAndState(eventId, state);
 
         checkEventForNull(event, eventId);

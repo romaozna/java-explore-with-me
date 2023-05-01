@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import ru.practicum.ewm.category.model.Category;
-import ru.practicum.ewm.event.dto.State;
+import ru.practicum.ewm.event.dto.EventState;
 import ru.practicum.ewm.location.model.Location;
 import ru.practicum.ewm.user.model.User;
 
@@ -52,7 +52,7 @@ public class Event {
     @Column(name = "request_moderation", nullable = false)
     private Boolean requestModeration;
     @Column(nullable = false)
-    private State state;
+    private EventState state;
     @Column(nullable = false)
     private String title;
 }

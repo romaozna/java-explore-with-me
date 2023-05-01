@@ -8,7 +8,6 @@ import lombok.extern.jackson.Jacksonized;
 import ru.practicum.ewm.location.dto.LocationDto;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -33,5 +32,5 @@ public class UpdateEventDto {
     Boolean requestModeration;
     @Size(min = 3, max = 120)
     String title;
-    State stateAction;
+    StateAction stateAction;
 }
