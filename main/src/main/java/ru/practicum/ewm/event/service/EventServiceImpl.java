@@ -59,7 +59,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDto> getEventsByUserId(Long userId, Integer from, Integer size) {
+    public List<EventDto> getByUserId(Long userId, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from, size);
         List<Event> events = eventRepository.findAllByInitiatorId(userId, pageable);
         Map<String, Long> eventViewsMap = getEventViewsMap(getEventsViewsList(events));
@@ -68,7 +68,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDto getEventByUserIdAndEventId(Long userId, Long eventId) {
+    public EventDto getByUserIdAndEventId(Long userId, Long eventId) {
         Event event = getEventByInitiatorIdAndEventId(userId, eventId);
         Map<String, Long> eventViewsMap = getEventViewsMap(getEventsViewsList(List.of(event)));
 
@@ -77,20 +77,18 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventDto updateEventByUserIdAndEventId(Long userId, Long eventId, UpdateEventDto updateEventDto) {
+    public EventDto updateByUserIdAndEventId(Long userId, Long eventId, UpdateEventDto updateEventDto) {
         validateEventDate(updateEventDto.getEventDate(), LocalDateTime.now().plusHours(2));
 
         Event event = getEventByInitiatorIdAndEventId(userId, eventId);
-        Map<String, Long> eventViewsMap = getEventViewsMap(getEventsViewsList(List.of(event)));
-
         updateEventState(event, updateEventDto);
 
-        return EventMapper.toEventDto(List.of(event), eventViewsMap).get(0);
+        return EventMapper.toEventDto(event);
     }
 
     @Override
     @Transactional
-    public EventDto updateEventByEventId(Long eventId, UpdateEventDto updateEventDto) {
+    public EventDto updateByEventId(Long eventId, UpdateEventDto updateEventDto) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException(String.format(EVENT_NOT_FOUND_MESSAGE, eventId)));
 
@@ -102,16 +100,14 @@ public class EventServiceImpl implements EventService {
         updateEventState(event, updateEventDto);
         updateEventDetails(event, updateEventDto);
 
-        Map<String, Long> eventViewsMap = getEventViewsMap(getEventsViewsList(List.of(event)));
-
-        return EventMapper.toEventDto(List.of(event), eventViewsMap).get(0);
+        return EventMapper.toEventDto(event);
     }
 
     @Override
-    public List<EventDto> getEvents(LocalDateTime rangeStart, LocalDateTime rangeEnd, List<Long> users,
-                                    List<EventState> states, List<Long> categories, Integer from, Integer size) {
+    public List<EventDto> getAll(LocalDateTime rangeStart, LocalDateTime rangeEnd, List<Long> users,
+                                 List<EventState> states, List<Long> categories, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from, size);
-        List<Event> events = eventRepository.getEvents(rangeStart, rangeEnd,
+        List<Event> events = eventRepository.getAll(rangeStart, rangeEnd,
                 users, states, categories, pageable);
         Map<String, Long> eventViewsMap = getEventViewsMap(getEventsViewsList(events));
 
@@ -219,7 +215,7 @@ public class EventServiceImpl implements EventService {
                 .map(e -> String.format("/events/%s", e.getId()))
                 .collect(Collectors.toList());
         String start = LocalDateTime.now().minusYears(2).format(customFormatter);
-        String end = LocalDateTime.now().plusYears(2).format(customFormatter);
+        String end = LocalDateTime.now().format(customFormatter);
 
         return statClient
                 .getStats(start, end, eventUris, false);

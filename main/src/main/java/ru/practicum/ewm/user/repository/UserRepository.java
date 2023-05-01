@@ -11,7 +11,7 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User AS u WHERE ((:ids) IS NULL OR u.id IN :ids)")
-    List<User> getUsers(@Param("ids") List<Long> ids, Pageable pageable);
+    List<User> getAll(@Param("ids") List<Long> ids, Pageable pageable);
 
     Integer deleteUserById(Long id);
 }

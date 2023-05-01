@@ -24,25 +24,25 @@ public class RequestPrivateController {
 
     @GetMapping("/users/{userId}/requests")
     public List<RequestDto> getRequestsById(@PathVariable("userId") Long userId) {
-        return requestService.getRequestsById(userId);
+        return requestService.getAllById(userId);
     }
 
     @GetMapping("/users/{userId}/events/{eventId}/requests")
     public List<RequestDto> getRequestsByUserIdAndEventId(@PathVariable("userId") Long userId,
                                                           @PathVariable("eventId") Long eventId) {
-        return requestService.getRequestsByUserIdAndEventId(userId, eventId);
+        return requestService.getAllByUserIdAndEventId(userId, eventId);
     }
 
     @PatchMapping("/users/{userId}/requests/{requestId}/cancel")
     public RequestDto cancelRequest(@PathVariable("userId") Long userId,
                                     @PathVariable(value = "requestId") Long requestId) {
-        return requestService.cancelRequest(userId, requestId);
+        return requestService.cancel(userId, requestId);
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}/requests")
     public RequestUpdateDto updateRequestStatus(@PathVariable("userId") Long userId,
                                                 @PathVariable("eventId") Long eventId,
                                                 @RequestBody(required = false) NewRequestUpdateDto newRequestUpdateDto) {
-        return requestService.updateRequestStatus(userId, eventId, newRequestUpdateDto);
+        return requestService.updateStatus(userId, eventId, newRequestUpdateDto);
     }
 }

@@ -32,16 +32,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getUsers(List<Long> ids, Integer from, Integer size) {
+    public List<UserDto> getAll(List<Long> ids, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from, size);
 
         return UserMapper
-                .toUserDto(userRepository.getUsers(ids, pageable));
+                .toUserDto(userRepository.getAll(ids, pageable));
     }
 
     @Override
     @Transactional
-    public void deleteUserById(Long userId) {
+    public void deleteById(Long userId) {
         Integer integer = userRepository.deleteUserById(userId);
 
         if (integer == 0) {

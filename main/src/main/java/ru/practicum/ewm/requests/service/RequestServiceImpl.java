@@ -52,18 +52,18 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<RequestDto> getRequestsById(Long userId) {
+    public List<RequestDto> getAllById(Long userId) {
         return RequestMapper.toRequestDto(requestRepository.findAllByRequesterId(userId));
     }
 
     @Override
-    public List<RequestDto> getRequestsByUserIdAndEventId(Long userId, Long eventId) {
+    public List<RequestDto> getAllByUserIdAndEventId(Long userId, Long eventId) {
         return RequestMapper.toRequestDto(requestRepository.findAllByEventId(eventId));
     }
 
     @Override
     @Transactional
-    public RequestDto cancelRequest(Long userId, Long requestId) {
+    public RequestDto cancel(Long userId, Long requestId) {
         Request request = getRequestByRequesterIdAndId(userId, requestId);
 
         request.setStatus(RequestStatus.CANCELED);
@@ -83,8 +83,8 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     @Transactional
-    public RequestUpdateDto updateRequestStatus(Long userId, Long eventId,
-                                                NewRequestUpdateDto newRequestUpdateDto) {
+    public RequestUpdateDto updateStatus(Long userId, Long eventId,
+                                         NewRequestUpdateDto newRequestUpdateDto) {
         validateNewRequestUpdateDto(newRequestUpdateDto);
 
         RequestUpdateDto requestUpdateDto = new RequestUpdateDto(new ArrayList<>(),

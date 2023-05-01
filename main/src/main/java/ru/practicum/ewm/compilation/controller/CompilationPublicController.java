@@ -20,11 +20,11 @@ public class CompilationPublicController {
     public List<CompilationDto> getCompilations(@RequestParam(value = "pinned", required = false) Boolean pinned,
                                                 @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
                                                 @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
-        return compilationService.getCompilations(pinned, from, size);
+        return compilationService.getAll(pinned, from, size);
     }
 
     @GetMapping("/compilations/{compId}")
     public CompilationDto getCompilationById(@PathVariable("compId") Long compId) {
-        return compilationService.getCompilationById(compId);
+        return compilationService.getById(compId);
     }
 }

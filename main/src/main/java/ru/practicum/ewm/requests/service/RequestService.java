@@ -10,11 +10,11 @@ public interface RequestService {
 
     RequestDto create(Long userId, Long eventId);
 
-    List<RequestDto> getRequestsById(Long userId);
+    List<RequestDto> getAllById(Long userId);
 
-    List<RequestDto> getRequestsByUserIdAndEventId(Long userId, Long eventId);
+    List<RequestDto> getAllByUserIdAndEventId(Long userId, Long eventId);
 
-    RequestUpdateDto updateRequestStatus(Long userId, Long eventId, NewRequestUpdateDto newRequestUpdateDto);
+    RequestUpdateDto updateStatus(Long userId, Long eventId, NewRequestUpdateDto newRequestUpdateDto);
 
-    RequestDto cancelRequest(Long userId, Long eventId);
+    RequestDto cancel(Long userId, Long eventId);
 }

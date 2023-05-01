@@ -16,16 +16,16 @@ public interface EventService {
             UserDto userDto,
             CategoryDto categoryDto);
 
-    List<EventDto> getEventsByUserId(Long userId, Integer from, Integer size);
+    List<EventDto> getByUserId(Long userId, Integer from, Integer size);
 
-    EventDto getEventByUserIdAndEventId(Long userId, Long eventId);
+    EventDto getByUserIdAndEventId(Long userId, Long eventId);
 
-    EventDto updateEventByUserIdAndEventId(Long userId, Long eventId, UpdateEventDto updateEventDto);
+    EventDto updateByUserIdAndEventId(Long userId, Long eventId, UpdateEventDto updateEventDto);
 
-    EventDto updateEventByEventId(Long eventId, UpdateEventDto updateEventDto);
+    EventDto updateByEventId(Long eventId, UpdateEventDto updateEventDto);
 
-    List<EventDto> getEvents(LocalDateTime rangeStart, LocalDateTime rangeEnd, List<Long> users,
-                             List<EventState> states, List<Long> categories, Integer from, Integer size);
+    List<EventDto> getAll(LocalDateTime rangeStart, LocalDateTime rangeEnd, List<Long> users,
+                          List<EventState> states, List<Long> categories, Integer from, Integer size);
 
     List<EventDto> getPublicEvents(Integer from, Integer size, EventState state,
                                    String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,

@@ -38,8 +38,8 @@ public class EventPrivateController {
                 newEventDto.getLocation().getLat(),
                 newEventDto.getLocation().getLon());
         LocationDto locationDto = locationService.create(newLocationDto);
-        UserDto userDto = userService.getUsers(List.of(userId), 0, 1).get(0);
-        CategoryDto categoryDto = categoryService.getCategoryById(newEventDto.getCategory(), 0, 1);
+        UserDto userDto = userService.getAll(List.of(userId), 0, 1).get(0);
+        CategoryDto categoryDto = categoryService.getById(newEventDto.getCategory(), 0, 1);
 
         return eventService.create(newEventDto, locationDto, userDto, categoryDto);
     }
@@ -48,19 +48,19 @@ public class EventPrivateController {
     public List<EventDto> getEventsByUserId(@PathVariable("userId") Long userId,
                                             @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
                                             @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
-        return eventService.getEventsByUserId(userId, from, size);
+        return eventService.getByUserId(userId, from, size);
     }
 
     @GetMapping("/users/{userId}/events/{eventId}")
     public EventDto getEventByUserIdAndEventId(@PathVariable("userId") Long userId,
                                                @PathVariable("eventId") Long eventId) {
-        return eventService.getEventByUserIdAndEventId(userId, eventId);
+        return eventService.getByUserIdAndEventId(userId, eventId);
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}")
     public EventDto updateEventByUserIdAndEventId(@PathVariable("userId") Long userId,
                                                   @PathVariable("eventId") Long eventId,
                                                   @RequestBody UpdateEventDto updateEventDto) {
-        return eventService.updateEventByUserIdAndEventId(userId, eventId, updateEventDto);
+        return eventService.updateByUserIdAndEventId(userId, eventId, updateEventDto);
     }
 }

@@ -36,16 +36,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto> getCategories(Integer from, Integer size) {
+    public List<CategoryDto> getAll(Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from, size);
 
         return CategoryMapper.toCategoryDto(categoryRepository.findAll(pageable));
     }
 
     @Override
-    public CategoryDto getCategoryById(Long categoryId, Integer from, Integer size) {
+    public CategoryDto getById(Long categoryId, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from, size);
-        List<Category> categories = categoryRepository.findCategoryById(categoryId, pageable);
+        List<Category> categories = categoryRepository.findById(categoryId, pageable);
 
         if (categories.isEmpty()) {
             throw new NotFoundException(String.format(CATEGORY_NOT_FOUND_MESSAGE, categoryId));
@@ -56,7 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public void deleteCategoryById(Long categoryId) {
+    public void deleteById(Long categoryId) {
         if (!eventRepository.findAllByCategoryId(categoryId).isEmpty()) {
             throw new OperationException("The category is not empty");
         }
@@ -70,7 +70,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public CategoryDto updateCategoryById(Long categoryId, NewCategoryDto newCategoryDto) {
+    public CategoryDto updateById(Long categoryId, NewCategoryDto newCategoryDto) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> {
             throw new NotFoundException(String.format(CATEGORY_NOT_FOUND_MESSAGE, categoryId));
         });

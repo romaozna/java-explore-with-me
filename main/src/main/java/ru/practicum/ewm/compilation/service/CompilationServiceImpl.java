@@ -29,16 +29,16 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
+    public List<CompilationDto> getAll(Boolean pinned, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from, size);
 
         return CompilationMapper
-                .toCompilationDto(compilationRepository.getCompilations(pinned, pageable));
+                .toCompilationDto(compilationRepository.findByPinned(pinned, pageable));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public CompilationDto getCompilationById(Long compId) {
+    public CompilationDto getById(Long compId) {
         Compilation compilation = compilationRepository.findCompilationById(compId)
                 .orElseThrow(() -> new NotFoundException(String.format(COMPILATION_NOT_FOUND_MESSAGE, compId)));
 

@@ -23,12 +23,12 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND (:categories IS NULL OR e.category.id IN :categories) " +
             "AND (coalesce(:rangeStart, :rangeEnd) IS NULL " +
             "OR e.eventDate BETWEEN coalesce(:rangeStart, e.eventDate) AND coalesce(:rangeEnd, e.eventDate))")
-    List<Event> getEvents(@Param("rangeStart") LocalDateTime rangeStart,
-                          @Param("rangeEnd") LocalDateTime rangeEnd,
-                          @Param("users") List<Long> users,
-                          @Param("states") List<EventState> states,
-                          @Param("categories") List<Long> categories,
-                          Pageable pageable);
+    List<Event> getAll(@Param("rangeStart") LocalDateTime rangeStart,
+                       @Param("rangeEnd") LocalDateTime rangeEnd,
+                       @Param("users") List<Long> users,
+                       @Param("states") List<EventState> states,
+                       @Param("categories") List<Long> categories,
+                       Pageable pageable);
 
     @Query("SELECT e FROM Event AS e " +
             "WHERE e.state = :state " +
