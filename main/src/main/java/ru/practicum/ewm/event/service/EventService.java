@@ -29,7 +29,9 @@ public interface EventService {
 
     List<EventDto> getPublicEvents(Integer from, Integer size, EventState state,
                                    String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
-                                   LocalDateTime rangeEnd, SortVariant sort, Boolean onlyAvailable, String ip, String uri);
+                                   LocalDateTime rangeEnd, SortVariant sort, Boolean onlyAvailable);
 
-    EventDto getPublicEventById(Long eventId, String ip, String url);
+    EventDto getPublicEventById(Long eventId);
+
+    void createNewHit(String ip, String url);
 }

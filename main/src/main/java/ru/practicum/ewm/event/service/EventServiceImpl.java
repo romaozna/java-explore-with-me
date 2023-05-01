@@ -122,8 +122,7 @@ public class EventServiceImpl implements EventService {
     public List<EventDto> getPublicEvents(Integer from, Integer size, EventState state,
                                           String text, List<Long> categories, Boolean paid,
                                           LocalDateTime rangeStart, LocalDateTime rangeEnd, SortVariant sortVariant,
-                                          Boolean onlyAvailable, String ip, String url) {
-        createNewHit(ip, url);
+                                          Boolean onlyAvailable) {
 
         Pageable pageable = PageRequest.of(from, size);
         List<Event> events = eventRepository
@@ -139,13 +138,20 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDto getPublicEventById(Long eventId, String ip, String url) {
-        createNewHit(ip, url);
+    public EventDto getPublicEventById(Long eventId) {
 
         Event event = getEventByEventIdAndState(eventId, EventState.PUBLISHED);
         Map<String, Long> eventViewsMap = getEventViewsMap(getEventsViewsList(List.of(event)));
 
         return EventMapper.toEventDto(List.of(event), eventViewsMap).get(0);
+    }
+
+    @Override
+    public void createNewHit(String ip, String url) {
+        String serviceName = "ewm-main-service";
+        CreatedEndpointHitDto createdEndpointHitDto = new CreatedEndpointHitDto(serviceName, url, ip, LocalDateTime.now());
+
+        statClient.createHit(createdEndpointHitDto);
     }
 
     private void validateEventDate(LocalDateTime eventDate, LocalDateTime limit) {
@@ -217,13 +223,6 @@ public class EventServiceImpl implements EventService {
 
         return statClient
                 .getStats(start, end, eventUris, false);
-    }
-
-    private void createNewHit(String ip, String url) {
-        String serviceName = "ewm-main-service";
-        CreatedEndpointHitDto createdEndpointHitDto = new CreatedEndpointHitDto(serviceName, url, ip, LocalDateTime.now());
-
-        statClient.createHit(createdEndpointHitDto);
     }
 
     private void sortEvents(SortVariant sortVariant, List<EventDto> eventDtos) {

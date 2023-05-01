@@ -40,7 +40,8 @@ public class EventPublicController {
         String ip = request.getRemoteAddr();
         String url = request.getRequestURI();
 
-        return eventService.getPublicEvents(from,
+        List<EventDto> events = eventService.getPublicEvents(
+                from,
                 size,
                 EventState.PUBLISHED,
                 text,
@@ -49,17 +50,22 @@ public class EventPublicController {
                 rangeStart,
                 rangeEnd,
                 sort,
-                onlyAvailable,
-                ip,
-                url);
+                onlyAvailable);
+        eventService.createNewHit(ip, url);
+
+        return events;
     }
 
     @GetMapping("/events/{eventId}")
     public EventDto getEventById(@PathVariable("eventId") Long eventId,
                                  HttpServletRequest request) {
+
         String ip = request.getRemoteAddr();
         String url = request.getRequestURI();
 
-        return eventService.getPublicEventById(eventId, ip, url);
+        EventDto publicEventById = eventService.getPublicEventById(eventId);
+        eventService.createNewHit(ip, url);
+
+        return  publicEventById;
     }
 }
