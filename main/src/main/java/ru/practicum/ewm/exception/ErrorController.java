@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -28,13 +30,12 @@ public class ErrorController {
         String field = Objects.requireNonNull(e.getBindingResult().getFieldError()).getField();
         Object rejectedValue = e.getBindingResult().getFieldValue(field);
         String message = String.format("Field: %s. Error: %s. Value: %s", field, errorMessage, rejectedValue);
-
         log.error(e.getLocalizedMessage());
 
         return new ErrorResponse(
-                HttpStatus.BAD_REQUEST.name(),
+                HttpStatus.BAD_REQUEST,
                 "Incorrectly made request.",
-                message);
+                message, getStackTraceString(e));
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
@@ -43,9 +44,9 @@ public class ErrorController {
         log.error(e.getLocalizedMessage());
 
         return new ErrorResponse(
-                HttpStatus.BAD_REQUEST.name(),
+                HttpStatus.BAD_REQUEST,
                 "Incorrectly made request.",
-                e.getLocalizedMessage());
+                e.getLocalizedMessage(), getStackTraceString(e));
     }
 
     @ExceptionHandler({NotFoundException.class})
@@ -54,9 +55,9 @@ public class ErrorController {
         log.error(e.getLocalizedMessage());
 
         return new ErrorResponse(
-                HttpStatus.NOT_FOUND.name(),
+                HttpStatus.NOT_FOUND,
                 "The required object was not found.",
-                e.getLocalizedMessage());
+                e.getLocalizedMessage(), getStackTraceString(e));
     }
 
     @ExceptionHandler({OperationException.class})
@@ -65,9 +66,9 @@ public class ErrorController {
         log.error(e.getLocalizedMessage());
 
         return new ErrorResponse(
-                HttpStatus.CONFLICT.name(),
+                HttpStatus.CONFLICT,
                 "For the requested operation the conditions are not met.",
-                e.getLocalizedMessage());
+                e.getLocalizedMessage(), getStackTraceString(e));
     }
 
     @ExceptionHandler({DataIntegrityViolationException.class})
@@ -76,9 +77,9 @@ public class ErrorController {
         log.error(e.getLocalizedMessage());
 
         return new ErrorResponse(
-                HttpStatus.CONFLICT.name(),
+                HttpStatus.CONFLICT,
                 "Integrity constraint has been violated.",
-                e.getLocalizedMessage());
+                e.getLocalizedMessage(), getStackTraceString(e));
     }
 
     @ExceptionHandler
@@ -87,9 +88,16 @@ public class ErrorController {
         log.error(e.getMessage());
 
         return new ErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.name(),
+                HttpStatus.INTERNAL_SERVER_ERROR,
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                e.getMessage());
+                e.getMessage(), getStackTraceString(e));
+    }
+
+    private String getStackTraceString(Throwable e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return sw.toString().replace("\r\n\t", " -> ");
     }
 
     @Value
@@ -97,9 +105,10 @@ public class ErrorController {
     @AllArgsConstructor
     @Jacksonized
     public static class ErrorResponse {
-        String status;
+        HttpStatus status;
         String reason;
         String message;
+        String errors;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         LocalDateTime timestamp = LocalDateTime.now();
     }
