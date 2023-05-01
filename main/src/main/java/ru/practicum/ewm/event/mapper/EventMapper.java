@@ -50,7 +50,6 @@ public class EventMapper {
         event.setParticipantLimit(updateEventDto.getParticipantLimit());
         event.setRequestModeration(updateEventDto.getRequestModeration());
         event.setTitle(updateEventDto.getTitle());
-        //event.setState(updateEventDto.getStateAction());
 
         event.setLocation(location);
         event.setCategory(category);

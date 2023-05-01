@@ -19,6 +19,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     @Query("SELECT new RequestStat(r.eventId, COUNT(r.eventId)) " +
             "FROM Request r " +
             "WHERE r.eventId IN :ids " +
+            "AND r.status = 1" +
             "GROUP BY r.eventId")
     List<RequestStat> getRequestsStats(@Param("ids") List<Long> ids);
 }
