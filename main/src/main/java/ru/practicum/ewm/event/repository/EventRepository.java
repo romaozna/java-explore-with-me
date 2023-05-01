@@ -24,11 +24,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND (coalesce(:rangeStart, :rangeEnd) IS NULL " +
             "OR e.eventDate BETWEEN coalesce(:rangeStart, e.eventDate) AND coalesce(:rangeEnd, e.eventDate))")
     List<Event> getAll(@Param("rangeStart") LocalDateTime rangeStart,
-                       @Param("rangeEnd") LocalDateTime rangeEnd,
-                       @Param("users") List<Long> users,
-                       @Param("states") List<EventState> states,
-                       @Param("categories") List<Long> categories,
-                       Pageable pageable);
+                          @Param("rangeEnd") LocalDateTime rangeEnd,
+                          @Param("users") List<Long> users,
+                          @Param("states") List<EventState> states,
+                          @Param("categories") List<Long> categories,
+                          Pageable pageable);
 
     @Query("SELECT e FROM Event AS e " +
             "WHERE e.state = :state " +
@@ -39,13 +39,13 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND (:paid IS NULL OR e.paid = :paid) " +
             "AND ((coalesce(:rangeStart, :rangeEnd) IS NULL AND e.eventDate > now()) " +
             "OR e.eventDate BETWEEN coalesce(:rangeStart, e.eventDate) AND coalesce(:rangeEnd, e.eventDate))")
-    List<Event> getPublicEvents(Pageable pageable,
-                                @Param("state") EventState state,
+    List<Event> getPublicEvents(@Param("state") EventState state,
                                 @Param("text") String text,
                                 @Param("categories") List<Long> categories,
                                 @Param("paid") Boolean paid,
                                 @Param("rangeStart") LocalDateTime rangeStart,
-                                @Param("rangeEnd") LocalDateTime rangeEnd);
+                                @Param("rangeEnd") LocalDateTime rangeEnd,
+                                Pageable pageable);
 
     Event findEventByIdAndState(Long id, EventState state);
 }

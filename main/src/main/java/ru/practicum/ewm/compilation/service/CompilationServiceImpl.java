@@ -1,7 +1,6 @@
 package ru.practicum.ewm.compilation.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +28,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CompilationDto> getAll(Boolean pinned, Integer from, Integer size) {
-        Pageable pageable = PageRequest.of(from, size);
+    public List<CompilationDto> getAll(Boolean pinned, Pageable pageable) {
 
         return CompilationMapper
                 .toCompilationDto(compilationRepository.findByPinned(pinned, pageable));
@@ -76,9 +74,9 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public void delete(Long compId) {
-        Integer integer = compilationRepository.deleteCompilationById(compId);
+        Integer count = compilationRepository.deleteCompilationById(compId);
 
-        if (integer == 0) {
+        if (count == 0) {
             throw new NotFoundException(String.format(COMPILATION_NOT_FOUND_MESSAGE, compId));
         }
     }

@@ -18,5 +18,6 @@ public class User {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false, unique = true)
+    @ToString.Exclude
     private String email;
 }

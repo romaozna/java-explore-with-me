@@ -1,6 +1,8 @@
 package ru.practicum.ewm.event.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.event.dto.EventDto;
 import ru.practicum.ewm.event.dto.EventState;
 import ru.practicum.ewm.event.dto.SortVariant;
+import ru.practicum.ewm.event.model.EventPublicParams;
 import ru.practicum.ewm.event.service.EventService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,18 +42,18 @@ public class EventPublicController {
                                     HttpServletRequest request) {
         String ip = request.getRemoteAddr();
         String url = request.getRequestURI();
-
-        List<EventDto> events = eventService.getPublicEvents(
-                from,
-                size,
+        Pageable pageable = PageRequest.of(from, size);
+        EventPublicParams eventPublicParams = new EventPublicParams(
                 EventState.PUBLISHED,
                 text,
                 categories,
                 paid,
                 rangeStart,
                 rangeEnd,
-                sort,
-                onlyAvailable);
+                onlyAvailable,
+                sort);
+
+        List<EventDto> events = eventService.getPublicEvents(eventPublicParams, pageable);
         eventService.createNewHit(ip, url);
 
         return events;

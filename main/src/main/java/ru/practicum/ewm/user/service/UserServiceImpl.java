@@ -1,7 +1,6 @@
 package ru.practicum.ewm.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,9 +31,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getAll(List<Long> ids, Integer from, Integer size) {
-        Pageable pageable = PageRequest.of(from, size);
-
+    public List<UserDto> getAll(List<Long> ids, Pageable pageable) {
         return UserMapper
                 .toUserDto(userRepository.getAll(ids, pageable));
     }
@@ -42,9 +39,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteById(Long userId) {
-        Integer integer = userRepository.deleteUserById(userId);
+        Integer count = userRepository.deleteUserById(userId);
 
-        if (integer == 0) {
+        if (count == 0) {
             throw new NotFoundException(String.format(USER_NOT_FOUND_MESSAGE, userId));
         }
     }

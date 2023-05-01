@@ -1,6 +1,8 @@
 package ru.practicum.ewm.compilation.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +22,8 @@ public class CompilationPublicController {
     public List<CompilationDto> getCompilations(@RequestParam(value = "pinned", required = false) Boolean pinned,
                                                 @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
                                                 @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
-        return compilationService.getAll(pinned, from, size);
+        Pageable pageable = PageRequest.of(from, size);
+        return compilationService.getAll(pinned, pageable);
     }
 
     @GetMapping("/compilations/{compId}")

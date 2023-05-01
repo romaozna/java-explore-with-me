@@ -1,6 +1,8 @@
 package ru.practicum.ewm.event.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.category.dto.CategoryDto;
@@ -34,12 +36,14 @@ public class EventPrivateController {
     @ResponseStatus(HttpStatus.CREATED)
     public EventDto create(@PathVariable("userId") Long userId,
                            @RequestBody @Valid NewEventDto newEventDto) {
+
+        Pageable pageable = PageRequest.of(0, 1);
         NewLocationDto newLocationDto = new NewLocationDto(
                 newEventDto.getLocation().getLat(),
                 newEventDto.getLocation().getLon());
         LocationDto locationDto = locationService.create(newLocationDto);
-        UserDto userDto = userService.getAll(List.of(userId), 0, 1).get(0);
-        CategoryDto categoryDto = categoryService.getById(newEventDto.getCategory(), 0, 1);
+        UserDto userDto = userService.getAll(List.of(userId), pageable).get(0);
+        CategoryDto categoryDto = categoryService.getById(newEventDto.getCategory(), pageable);
 
         return eventService.create(newEventDto, locationDto, userDto, categoryDto);
     }
@@ -48,7 +52,8 @@ public class EventPrivateController {
     public List<EventDto> getEventsByUserId(@PathVariable("userId") Long userId,
                                             @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
                                             @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
-        return eventService.getByUserId(userId, from, size);
+        Pageable pageable = PageRequest.of(from, size);
+        return eventService.getByUserId(userId, pageable);
     }
 
     @GetMapping("/users/{userId}/events/{eventId}")

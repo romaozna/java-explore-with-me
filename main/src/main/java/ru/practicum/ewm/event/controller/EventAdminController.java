@@ -1,11 +1,14 @@
 package ru.practicum.ewm.event.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.event.dto.EventDto;
 import ru.practicum.ewm.event.dto.EventState;
 import ru.practicum.ewm.event.dto.UpdateEventDto;
+import ru.practicum.ewm.event.model.EventAdminParams;
 import ru.practicum.ewm.event.service.EventService;
 
 import javax.validation.Valid;
@@ -40,6 +43,9 @@ public class EventAdminController {
                                     Integer from,
                                     @RequestParam(value = "size", required = false, defaultValue = "10")
                                     Integer size) {
-        return eventService.getAll(rangeStart, rangeEnd, users, states, categories, from, size);
+
+        Pageable pageable = PageRequest.of(from, size);
+        EventAdminParams eventParams = new EventAdminParams(states, categories, users, rangeStart, rangeEnd);
+        return eventService.getAll(eventParams, pageable);
     }
 }

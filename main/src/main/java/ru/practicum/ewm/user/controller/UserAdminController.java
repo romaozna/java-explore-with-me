@@ -1,6 +1,8 @@
 package ru.practicum.ewm.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.user.dto.NewUserDto;
@@ -27,7 +29,8 @@ public class UserAdminController {
             @RequestParam(value = "ids", required = false) List<Long> ids,
             @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
             @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
-        return userService.getAll(ids, from, size);
+        Pageable pageable = PageRequest.of(from, size);
+        return userService.getAll(ids, pageable);
     }
 
     @DeleteMapping("/admin/users/{userId}")

@@ -1,7 +1,6 @@
 package ru.practicum.ewm.category.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,15 +35,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto> getAll(Integer from, Integer size) {
-        Pageable pageable = PageRequest.of(from, size);
-
+    public List<CategoryDto> getAll(Pageable pageable) {
         return CategoryMapper.toCategoryDto(categoryRepository.findAll(pageable));
     }
 
     @Override
-    public CategoryDto getById(Long categoryId, Integer from, Integer size) {
-        Pageable pageable = PageRequest.of(from, size);
+    public CategoryDto getById(Long categoryId, Pageable pageable) {
         List<Category> categories = categoryRepository.findById(categoryId, pageable);
 
         if (categories.isEmpty()) {
@@ -61,9 +57,9 @@ public class CategoryServiceImpl implements CategoryService {
             throw new OperationException("The category is not empty");
         }
 
-        Integer integer = categoryRepository.deleteCategoryById(categoryId);
+        Integer count = categoryRepository.deleteCategoryById(categoryId);
 
-        if (integer == 0) {
+        if (count == 0) {
             throw new NotFoundException(String.format(CATEGORY_NOT_FOUND_MESSAGE, categoryId));
         }
     }

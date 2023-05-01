@@ -1,7 +1,6 @@
 package ru.practicum.ewm.event.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +11,8 @@ import ru.practicum.ewm.dto.ViewStatDto;
 import ru.practicum.ewm.event.dto.*;
 import ru.practicum.ewm.event.mapper.EventMapper;
 import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.event.model.EventAdminParams;
+import ru.practicum.ewm.event.model.EventPublicParams;
 import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.exception.OperationException;
@@ -59,8 +60,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDto> getByUserId(Long userId, Integer from, Integer size) {
-        Pageable pageable = PageRequest.of(from, size);
+    public List<EventDto> getByUserId(Long userId, Pageable pageable) {
         List<Event> events = eventRepository.findAllByInitiatorId(userId, pageable);
         Map<String, Long> eventViewsMap = getEventViewsMap(getEventsViewsList(events));
 
@@ -104,33 +104,38 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDto> getAll(LocalDateTime rangeStart, LocalDateTime rangeEnd, List<Long> users,
-                                 List<EventState> states, List<Long> categories, Integer from, Integer size) {
-        Pageable pageable = PageRequest.of(from, size);
-        List<Event> events = eventRepository.getAll(rangeStart, rangeEnd,
-                users, states, categories, pageable);
+    public List<EventDto> getAll(EventAdminParams params, Pageable pageable) {
+
+        List<Event> events = eventRepository.getAll(
+                params.getRangeStart(),
+                params.getRangeEnd(),
+                params.getUsers(),
+                params.getStates(),
+                params.getCategories(),
+                pageable);
         Map<String, Long> eventViewsMap = getEventViewsMap(getEventsViewsList(events));
 
         return EventMapper.toEventDto(events, eventViewsMap);
     }
 
     @Override
-    public List<EventDto> getPublicEvents(Integer from, Integer size, EventState state,
-                                          String text, List<Long> categories, Boolean paid,
-                                          LocalDateTime rangeStart, LocalDateTime rangeEnd, SortVariant sortVariant,
-                                          Boolean onlyAvailable) {
-
-        Pageable pageable = PageRequest.of(from, size);
-        List<Event> events = eventRepository
-                .getPublicEvents(pageable, state, text, categories, paid, rangeStart, rangeEnd);
+    public List<EventDto> getPublicEvents(EventPublicParams params, Pageable pageable) {
+        List<Event> events = eventRepository.getPublicEvents(
+                params.getState(),
+                params.getText(),
+                params.getCategories(),
+                params.getPaid(),
+                params.getRangeStart(),
+                params.getRangeEnd(),
+                pageable);
         List<Long> eventIds = events.stream().map(Event::getId).collect(Collectors.toList());
         List<RequestStat> requestStats = requestRepository.getRequestsStats(eventIds);
         Map<String, Long> eventViewsMap = getEventViewsMap(getEventsViewsList(events));
         List<EventDto> eventDtos = EventMapper.toEventDto(events, eventViewsMap);
 
-        sortEvents(sortVariant, eventDtos);
+        sortEvents(params.getSort(), eventDtos);
 
-        return filterEventsByAvailable(eventDtos, requestStats, onlyAvailable);
+        return filterEventsByAvailable(eventDtos, requestStats, params.getOnlyAvailable());
     }
 
     @Override
@@ -203,8 +208,6 @@ public class EventServiceImpl implements EventService {
                     event.setRequestModeration(true);
                 }
                 break;
-            default:
-                break;
         }
     }
 
@@ -214,11 +217,14 @@ public class EventServiceImpl implements EventService {
                 .stream()
                 .map(e -> String.format("/events/%s", e.getId()))
                 .collect(Collectors.toList());
-        String start = LocalDateTime.now().minusYears(2).format(customFormatter);
+        String start = events.stream()
+                .min(Comparator.comparing(Event::getCreatedOn))
+                .get()
+                .getCreatedOn()
+                .format(customFormatter);
         String end = LocalDateTime.now().format(customFormatter);
 
-        return statClient
-                .getStats(start, end, eventUris, false);
+        return statClient.getStats(start, end, eventUris, false);
     }
 
     private void sortEvents(SortVariant sortVariant, List<EventDto> eventDtos) {
