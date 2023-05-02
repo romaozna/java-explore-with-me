@@ -14,6 +14,7 @@ import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.exception.OperationException;
 
 import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
