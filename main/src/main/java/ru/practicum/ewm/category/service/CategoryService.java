@@ -11,7 +11,7 @@ public interface CategoryService {
 
     List<CategoryDto> getAll(Pageable pageable);
 
-    CategoryDto getById(Long categoryId, Pageable pageable);
+    CategoryDto getById(Long categoryId);
 
     void deleteById(Long categoryId);
 

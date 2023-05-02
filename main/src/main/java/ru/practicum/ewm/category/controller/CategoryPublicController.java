@@ -28,10 +28,7 @@ public class CategoryPublicController {
 
     @GetMapping("/categories/{categoryId}")
     public CategoryDto getCategoryById(
-            @PathVariable("categoryId") Long categoryId,
-            @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
-            @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
-        Pageable pageable = PageRequest.of(from, size);
-        return categoryService.getById(categoryId, pageable);
+            @PathVariable("categoryId") Long categoryId) {
+        return categoryService.getById(categoryId);
     }
 }

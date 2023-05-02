@@ -43,7 +43,7 @@ public class EventPrivateController {
                 newEventDto.getLocation().getLon());
         LocationDto locationDto = locationService.create(newLocationDto);
         UserDto userDto = userService.getAll(List.of(userId), pageable).get(0);
-        CategoryDto categoryDto = categoryService.getById(newEventDto.getCategory(), pageable);
+        CategoryDto categoryDto = categoryService.getById(newEventDto.getCategory());
 
         return eventService.create(newEventDto, locationDto, userDto, categoryDto);
     }

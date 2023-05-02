@@ -14,7 +14,6 @@ import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.exception.OperationException;
 
 import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -40,14 +39,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto getById(Long categoryId, Pageable pageable) {
-        List<Category> categories = categoryRepository.findById(categoryId, pageable);
+    public CategoryDto getById(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException(String.format(CATEGORY_NOT_FOUND_MESSAGE, categoryId)));
 
-        if (categories.isEmpty()) {
-            throw new NotFoundException(String.format(CATEGORY_NOT_FOUND_MESSAGE, categoryId));
-        }
-
-        return CategoryMapper.toCategoryDto(categories.get(0));
+        return CategoryMapper.toCategoryDto(category);
     }
 
     @Override
