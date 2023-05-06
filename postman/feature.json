@@ -189,7 +189,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"annotation\":\"Обязательное присутствтие\",\r\n    \"category\": 1,\r\n    \"description\": \"Представление в большом театре\",\r\n    \"eventDate\": \"2023-06-01 10:30:00\",\r\n    \"location\": {\r\n            \"id\": 1,\r\n            \"lat\": 45.445665,\r\n            \"lon\": 54.235564\r\n        },\r\n    \"paid\": true,\r\n    \"participantLimit\": 100,\r\n    \"requestModeration\": false, \r\n    \"title\": \"Забег\"\r\n}"
+					"raw": "{\r\n    \"annotation\":\"Обязательное присутствтие\",\r\n    \"category\": 1,\r\n    \"text\": \"Представление в большом театре\",\r\n    \"eventDate\": \"2023-06-01 10:30:00\",\r\n    \"location\": {\r\n            \"id\": 1,\r\n            \"lat\": 45.445665,\r\n            \"lon\": 54.235564\r\n        },\r\n    \"paid\": true,\r\n    \"participantLimit\": 100,\r\n    \"requestModeration\": false, \r\n    \"title\": \"Забег\"\r\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/users/1/events",
@@ -240,7 +240,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"description\":\"Первый, на!\"\r\n}"
+					"raw": "{\r\n    \"text\":\"Первый, на!\"\r\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/users/1/comments?eventId=1",
@@ -297,7 +297,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"description\":\"Comment 2\"\r\n}"
+					"raw": "{\r\n    \"text\":\"Comment 2\"\r\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/users/1/comments?eventId=1",
@@ -354,7 +354,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"description\":\"Хватит спамить!\"\r\n}"
+					"raw": "{\r\n    \"text\":\"Хватит спамить!\"\r\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/users/2/comments?eventId=1",
@@ -719,7 +719,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"description\":\"updated comment 1\"\r\n}"
+					"raw": "{\r\n    \"text\":\"updated comment 1\"\r\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/users/1/comments/1?eventId=1",
@@ -775,7 +775,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"description\":\"updated from another user comment 1\"\r\n}"
+					"raw": "{\r\n    \"text\":\"updated from another user comment 1\"\r\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/users/2/comments/1?eventId=1",
@@ -833,7 +833,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"description\":\"updated wrong comm\"\r\n}"
+					"raw": "{\r\n    \"text\":\"updated wrong comm\"\r\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/users/1/comments/999?eventId=1",
@@ -891,7 +891,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"description\":\"updated wrong user\"\r\n}"
+					"raw": "{\r\n    \"text\":\"updated wrong user\"\r\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/users/999/comments/1?eventId=1",
