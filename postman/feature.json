@@ -189,7 +189,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"annotation\":\"Обязательное присутствтие\",\r\n    \"category\": 1,\r\n    \"text\": \"Представление в большом театре\",\r\n    \"eventDate\": \"2023-06-01 10:30:00\",\r\n    \"location\": {\r\n            \"id\": 1,\r\n            \"lat\": 45.445665,\r\n            \"lon\": 54.235564\r\n        },\r\n    \"paid\": true,\r\n    \"participantLimit\": 100,\r\n    \"requestModeration\": false, \r\n    \"title\": \"Забег\"\r\n}"
+					"raw": "{\r\n    \"annotation\":\"Обязательное присутствтие\",\r\n    \"category\": 1,\r\n    \"description\": \"Представление в большом театре\",\r\n    \"eventDate\": \"2023-06-01 10:30:00\",\r\n    \"location\": {\r\n            \"id\": 1,\r\n            \"lat\": 45.445665,\r\n            \"lon\": 54.235564\r\n        },\r\n    \"paid\": true,\r\n    \"participantLimit\": 100,\r\n    \"requestModeration\": false, \r\n    \"title\": \"Забег\"\r\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/users/1/events",
