@@ -26,16 +26,16 @@ public class UserAdminController {
 
     @GetMapping("/admin/users")
     public List<UserDto> getUsers(
-            @RequestParam(value = "ids", required = false) List<Long> ids,
-            @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
-            @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
+            @RequestParam(required = false) List<Long> ids,
+            @RequestParam(required = false, defaultValue = "0") Integer from,
+            @RequestParam(required = false, defaultValue = "10") Integer size) {
         Pageable pageable = PageRequest.of(from, size);
         return userService.getAll(ids, pageable);
     }
 
     @DeleteMapping("/admin/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategoryById(@PathVariable("userId") Long userId) {
+    public void deleteCategoryById(@PathVariable Long userId) {
         userService.deleteById(userId);
     }
 }

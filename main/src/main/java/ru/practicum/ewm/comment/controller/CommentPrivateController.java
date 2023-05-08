@@ -31,8 +31,8 @@ public class CommentPrivateController {
 
     @GetMapping
     public List<CommentDto> getByUser(@Positive @PathVariable Long userId,
-                                      @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
-                                      @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
+                                      @RequestParam(required = false, defaultValue = "0") Integer from,
+                                      @RequestParam(required = false, defaultValue = "10") Integer size) {
 
         Pageable pageable = PageRequest.of(from, size);
         return commentService.getAllByUserId(userId, pageable);
@@ -48,8 +48,8 @@ public class CommentPrivateController {
     @GetMapping("/event/{eventId}")
     public List<CommentDto> getByEvent(@Positive @PathVariable Long userId,
                                        @Positive @PathVariable Long eventId,
-                                       @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
-                                       @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
+                                       @RequestParam(required = false, defaultValue = "0") Integer from,
+                                       @RequestParam(required = false, defaultValue = "10") Integer size) {
 
         Pageable pageable = PageRequest.of(from, size);
         return commentService.getAllByEventId(userId, eventId, pageable);

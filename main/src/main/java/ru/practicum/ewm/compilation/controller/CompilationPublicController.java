@@ -19,15 +19,15 @@ public class CompilationPublicController {
     private final CompilationService compilationService;
 
     @GetMapping("/compilations")
-    public List<CompilationDto> getCompilations(@RequestParam(value = "pinned", required = false) Boolean pinned,
-                                                @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
-                                                @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
+    public List<CompilationDto> getCompilations(@RequestParam(required = false) Boolean pinned,
+                                                @RequestParam(required = false, defaultValue = "0") Integer from,
+                                                @RequestParam(required = false, defaultValue = "10") Integer size) {
         Pageable pageable = PageRequest.of(from, size);
         return compilationService.getAll(pinned, pageable);
     }
 
     @GetMapping("/compilations/{compId}")
-    public CompilationDto getCompilationById(@PathVariable("compId") Long compId) {
+    public CompilationDto getCompilationById(@PathVariable Long compId) {
         return compilationService.getById(compId);
     }
 }

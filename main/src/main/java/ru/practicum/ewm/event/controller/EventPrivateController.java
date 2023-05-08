@@ -34,7 +34,7 @@ public class EventPrivateController {
 
     @PostMapping("/users/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
-    public EventDto create(@PathVariable("userId") Long userId,
+    public EventDto create(@PathVariable Long userId,
                            @RequestBody @Valid NewEventDto newEventDto) {
 
         Pageable pageable = PageRequest.of(0, 1);
@@ -49,22 +49,22 @@ public class EventPrivateController {
     }
 
     @GetMapping("/users/{userId}/events")
-    public List<EventDto> getEventsByUserId(@PathVariable("userId") Long userId,
-                                            @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
-                                            @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
+    public List<EventDto> getEventsByUserId(@PathVariable Long userId,
+                                            @RequestParam(required = false, defaultValue = "0") Integer from,
+                                            @RequestParam(required = false, defaultValue = "10") Integer size) {
         Pageable pageable = PageRequest.of(from, size);
         return eventService.getByUserId(userId, pageable);
     }
 
     @GetMapping("/users/{userId}/events/{eventId}")
-    public EventDto getEventByUserIdAndEventId(@PathVariable("userId") Long userId,
-                                               @PathVariable("eventId") Long eventId) {
+    public EventDto getEventByUserIdAndEventId(@PathVariable Long userId,
+                                               @PathVariable Long eventId) {
         return eventService.getByUserIdAndEventId(userId, eventId);
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}")
-    public EventDto updateEventByUserIdAndEventId(@PathVariable("userId") Long userId,
-                                                  @PathVariable("eventId") Long eventId,
+    public EventDto updateEventByUserIdAndEventId(@PathVariable Long userId,
+                                                  @PathVariable Long eventId,
                                                   @RequestBody UpdateEventDto updateEventDto) {
         return eventService.updateByUserIdAndEventId(userId, eventId, updateEventDto);
     }

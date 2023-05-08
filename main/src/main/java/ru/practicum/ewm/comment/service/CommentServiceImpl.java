@@ -31,8 +31,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentDto create(Long userId, Long eventId, CommentDto commentDto) {
-        User user = validateUser(userId);
-        Event event = validateEvent(eventId);
+        User user = checkUser(userId);
+        Event event = checkEvent(eventId);
         commentDto.setCreated(LocalDateTime.now());
         Comment comment = commentRepository.save(CommentMapper.toComment(commentDto, event, user));
         return CommentMapper.toCommentDto(comment);
@@ -41,9 +41,9 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentDto update(Long commentId, Long userId, Long eventId, CommentDto commentDto) {
-        validateUser(userId);
-        validateEvent(eventId);
-        Comment comment = validateComment(commentId);
+        checkUser(userId);
+        checkEvent(eventId);
+        Comment comment = checkComment(commentId);
         if (!comment.getAuthor().getId().equals(userId)) {
             throw new OperationException(String.format("User with id=%s is not the author of the comment", userId));
         }
@@ -57,15 +57,15 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDto getById(Long userId, Long commentId) {
-        validateUser(userId);
-        Comment comment = validateComment(commentId);
+        checkUser(userId);
+        Comment comment = checkComment(commentId);
         return CommentMapper.toCommentDto(comment);
     }
 
     @Override
     public List<CommentDto> getAllByEventId(Long userId, Long eventId, Pageable pageable) {
-        validateUser(userId);
-        validateEvent(eventId);
+        checkUser(userId);
+        checkEvent(eventId);
         return commentRepository.getAllByAuthorIdAndEventId(userId, eventId, pageable).stream()
                 .map(CommentMapper::toCommentDto)
                 .collect(Collectors.toList());
@@ -73,7 +73,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDto> getAllByUserId(Long userId, Pageable pageable) {
-        validateUser(userId);
+        checkUser(userId);
         return commentRepository.getAllByAuthorId(userId, pageable).stream()
                 .map(CommentMapper::toCommentDto)
                 .collect(Collectors.toList());
@@ -82,34 +82,34 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteById(Long commentId) {
-        validateComment(commentId);
+        checkComment(commentId);
         commentRepository.deleteById(commentId);
     }
 
     @Override
     @Transactional
     public void deleteByUser(Long userId, Long commentId) {
-        validateUser(userId);
-        Comment comment = validateComment(commentId);
+        checkUser(userId);
+        Comment comment = checkComment(commentId);
         if (!comment.getAuthor().getId().equals(userId)) {
             throw new OperationException(String.format("User with id=%s is not the author of the comment", userId));
         }
         commentRepository.deleteById(commentId);
     }
 
-    private User validateUser(Long userId) {
+    private User checkUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> {
             throw new NotFoundException(String.format("User with id=%s was not found", userId));
         });
     }
 
-    private Event validateEvent(Long eventId) {
+    private Event checkEvent(Long eventId) {
         return eventRepository.findById(eventId).orElseThrow(() -> {
             throw new NotFoundException(String.format("Event with id=%s was not found", eventId));
         });
     }
 
-    private Comment validateComment(Long commentId) {
+    private Comment checkComment(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(() -> {
             throw new NotFoundException(String.format("Comment with id=%s was not found", commentId));
         });
