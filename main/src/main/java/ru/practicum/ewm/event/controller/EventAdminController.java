@@ -23,25 +23,25 @@ public class EventAdminController {
     private final EventService eventService;
 
     @PatchMapping("/admin/events/{eventId}")
-    public EventDto updateEventByUserIdAndEventId(@PathVariable("eventId") Long eventId,
+    public EventDto updateEventByUserIdAndEventId(@PathVariable Long eventId,
                                                   @Valid @RequestBody UpdateEventDto updateEventDto) {
         return eventService.updateByEventId(eventId, updateEventDto);
     }
 
     @GetMapping("/admin/events")
-    public List<EventDto> getEvents(@RequestParam(value = "rangeStart", required = false)
+    public List<EventDto> getEvents(@RequestParam(required = false)
                                     LocalDateTime rangeStart,
-                                    @RequestParam(value = "rangeEnd", required = false)
+                                    @RequestParam(required = false)
                                     LocalDateTime rangeEnd,
-                                    @RequestParam(value = "users", required = false)
+                                    @RequestParam(required = false)
                                     List<Long> users,
-                                    @RequestParam(value = "states", required = false)
+                                    @RequestParam(required = false)
                                     List<EventState> states,
-                                    @RequestParam(value = "categories", required = false)
+                                    @RequestParam(required = false)
                                     List<Long> categories,
-                                    @RequestParam(value = "from", required = false, defaultValue = "0")
+                                    @RequestParam(required = false, defaultValue = "0")
                                     Integer from,
-                                    @RequestParam(value = "size", required = false, defaultValue = "10")
+                                    @RequestParam(required = false, defaultValue = "10")
                                     Integer size) {
 
         Pageable pageable = PageRequest.of(from, size);

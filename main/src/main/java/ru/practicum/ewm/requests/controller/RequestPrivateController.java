@@ -17,31 +17,31 @@ public class RequestPrivateController {
 
     @PostMapping("/users/{userId}/requests")
     @ResponseStatus(HttpStatus.CREATED)
-    public RequestDto create(@PathVariable("userId") Long userId,
-                             @RequestParam(value = "eventId") Long eventId) {
+    public RequestDto create(@PathVariable Long userId,
+                             @RequestParam Long eventId) {
         return requestService.create(userId, eventId);
     }
 
     @GetMapping("/users/{userId}/requests")
-    public List<RequestDto> getRequestsById(@PathVariable("userId") Long userId) {
+    public List<RequestDto> getRequestsById(@PathVariable Long userId) {
         return requestService.getAllById(userId);
     }
 
     @GetMapping("/users/{userId}/events/{eventId}/requests")
-    public List<RequestDto> getRequestsByUserIdAndEventId(@PathVariable("userId") Long userId,
-                                                          @PathVariable("eventId") Long eventId) {
+    public List<RequestDto> getRequestsByUserIdAndEventId(@PathVariable Long userId,
+                                                          @PathVariable Long eventId) {
         return requestService.getAllByUserIdAndEventId(userId, eventId);
     }
 
     @PatchMapping("/users/{userId}/requests/{requestId}/cancel")
-    public RequestDto cancelRequest(@PathVariable("userId") Long userId,
-                                    @PathVariable(value = "requestId") Long requestId) {
+    public RequestDto cancelRequest(@PathVariable Long userId,
+                                    @PathVariable Long requestId) {
         return requestService.cancel(userId, requestId);
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}/requests")
-    public RequestUpdateDto updateRequestStatus(@PathVariable("userId") Long userId,
-                                                @PathVariable("eventId") Long eventId,
+    public RequestUpdateDto updateRequestStatus(@PathVariable Long userId,
+                                                @PathVariable Long eventId,
                                                 @RequestBody(required = false) NewRequestUpdateDto newRequestUpdateDto) {
         return requestService.updateStatus(userId, eventId, newRequestUpdateDto);
     }

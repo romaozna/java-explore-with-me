@@ -20,15 +20,15 @@ public class CategoryPublicController {
 
     @GetMapping("/categories")
     public List<CategoryDto> getCategories(
-            @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
-            @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
+            @RequestParam(required = false, defaultValue = "0") Integer from,
+            @RequestParam(required = false, defaultValue = "10") Integer size) {
         Pageable pageable = PageRequest.of(from, size);
         return categoryService.getAll(pageable);
     }
 
     @GetMapping("/categories/{categoryId}")
     public CategoryDto getCategoryById(
-            @PathVariable("categoryId") Long categoryId) {
+            @PathVariable Long categoryId) {
         return categoryService.getById(categoryId);
     }
 }

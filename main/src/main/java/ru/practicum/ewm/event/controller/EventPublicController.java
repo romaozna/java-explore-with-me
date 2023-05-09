@@ -24,21 +24,21 @@ public class EventPublicController {
     private final EventService eventService;
 
     @GetMapping("/events")
-    public List<EventDto> getEvents(@RequestParam(value = "text", required = false)
+    public List<EventDto> getEvents(@RequestParam(required = false)
                                     String text,
-                                    @RequestParam(value = "categories", required = false)
+                                    @RequestParam(required = false)
                                     List<Long> categories,
-                                    @RequestParam(value = "paid", required = false)
+                                    @RequestParam(required = false)
                                     Boolean paid,
-                                    @RequestParam(value = "rangeStart", required = false)
+                                    @RequestParam(required = false)
                                     LocalDateTime rangeStart,
-                                    @RequestParam(value = "rangeEnd", required = false)
+                                    @RequestParam(required = false)
                                     LocalDateTime rangeEnd,
-                                    @RequestParam(value = "paid", defaultValue = "false")
+                                    @RequestParam(defaultValue = "false")
                                     Boolean onlyAvailable,
-                                    @RequestParam(value = "sort", required = false) SortVariant sort,
-                                    @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
-                                    @RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
+                                    @RequestParam(required = false) SortVariant sort,
+                                    @RequestParam(required = false, defaultValue = "0") Integer from,
+                                    @RequestParam(required = false, defaultValue = "10") Integer size,
                                     HttpServletRequest request) {
         String ip = request.getRemoteAddr();
         String url = request.getRequestURI();
@@ -60,7 +60,7 @@ public class EventPublicController {
     }
 
     @GetMapping("/events/{eventId}")
-    public EventDto getEventById(@PathVariable("eventId") Long eventId,
+    public EventDto getEventById(@PathVariable Long eventId,
                                  HttpServletRequest request) {
 
         String ip = request.getRemoteAddr();
